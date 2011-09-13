@@ -11,9 +11,9 @@ LICENSE       = free
 FREEVERSION   = lppl
 FILE          = $(CONTRIBUTION).tar.gz
 
-SOURCEFILES   = $(CONTRIBUTION).dtx $(CONTRIBUTION).ins
+SOURCEFILES   = $(CONTRIBUTION).dtx $(CONTRIBUTION).ins $(CONTRIBUTION)-test.tex
 PKGFILES      = $(CONTRIBUTION).sty
-DOCFILES      = $(CONTRIBUTION).pdf
+DOCFILES      = $(CONTRIBUTION).pdf $(CONTRIBUTION)-test.pdf
 
 export CONTRIBUTION VERSION NAME EMAIL SUMMARY DIRECTORY DONOTANNOUNCE ANNOUNCE NOTES LICENSE FREEVERSION FILE
 
@@ -26,9 +26,13 @@ $(FILE): README $(SOURCEFILES) $(DOCFILES) $(PKGFILES)
 %.sty: %.dtx %.ins
 	latex $*.ins
 
+%.pdf: %.tex
+	lualatex -interaction=batchmode $<
+	lualatex -interaction=batchmode $<
+
 $(CONTRIBUTION).pdf: $(CONTRIBUTION).sty
-	pdflatex -interaction=batchmode $(CONTRIBUTION).dtx
-	pdflatex -interaction=batchmode $(CONTRIBUTION).dtx
+	lualatex -interaction=batchmode $(CONTRIBUTION).dtx
+	lualatex -interaction=batchmode $(CONTRIBUTION).dtx
 
 upload: ctanify
 	$(CTANUPLOAD) -p

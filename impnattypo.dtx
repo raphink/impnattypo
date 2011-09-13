@@ -26,15 +26,16 @@
 %<package>\NeedsTeXFormat{LaTeX2e}[1999/12/01]
 %<package>\ProvidesPackage{impnattypo}
 %<*package>
-    [2011/09/11 0.1 Recommendations typographiques de l'Imprimerie Nationale Française]
+    [2011/09/13 0.2 Recommendations typographiques de l'Imprimerie Nationale Française]
 %</package>
 %
 %<*driver>
 \documentclass{ltxdoc}
-\usepackage{impnattypo}[2011/09/11]
+\usepackage[hyphenation,nosingleletter]{impnattypo}[2011/09/13]
 \usepackage[french]{babel}
-\usepackage[utf8]{inputenc}
-\usepackage[T1]{fontenc}
+\usepackage{fontspec}
+\setmainfont{Linux Libertine O}
+\usepackage{metalogo}
 \EnableCrossrefs
 \CodelineIndex
 \RecordChanges
@@ -46,7 +47,7 @@
 %</driver>
 % \fi
 %
-% \CheckSum{26}
+% \CheckSum{41}
 %
 % \CharacterTable
 %  {Upper-case    \A\B\C\D\E\F\G\H\I\J\K\L\M\N\O\P\Q\R\S\T\U\V\W\X\Y\Z
@@ -65,6 +66,7 @@
 %   Right brace   \}     Tilde         \~}
 %
 %
+% \changes{0.2}{2011/09/13}{Add nosingleletter option}
 % \changes{0.1}{2011/09/11}{First version}
 %
 % \DoNotIndex{\newcommand,\newenvironment}
@@ -118,6 +120,16 @@
 %    \usepackage[hyphenation]{impnattypo}
 % \end{verbatim}
 %
+% Il est également recommendé d'éviter les coupures isolant une lettre.
+% La solution donnée fournie par Patrick Gundlach sur tex.stackexchange.com
+% \footnote{\url{http://tex.stackexchange.com/questions/27780/one-letter-word-at-the-end-of-line}}
+% permet de remédier à cela en utilisant \LuaTeX. Pour activer cette
+% fonctionalité, il faut utiliser l'option \texttt{nosingleletter}:
+%
+% \begin{verbatim}
+%    \usepackage[nosingleletter]{impnattypo}
+% \end{verbatim}
+%
 % \subsection{Numérotation des chapitres}
 %
 % Concernant la numérotation des chapitres, le lexique indique:
@@ -153,10 +165,13 @@
 %
 %    \begin{macrocode}
 \ProvidesPackage{impnattypo}
+\usepackage{ifluatex}
 \newif\if@impnattypo@frenchchapters
 \DeclareOption{frenchchapters}{\@impnattypo@frenchchapterstrue}
 \newif\if@impnattypo@hyphenation
 \DeclareOption{hyphenation}{\@impnattypo@hyphenationtrue}
+\newif\if@impnattypo@nosingleletter
+\DeclareOption{nosingleletter}{\@impnattypo@nosinglelettertrue}
 \ProcessOptions
 \if@impnattypo@hyphenation
 %    \end{macrocode}
@@ -184,6 +199,49 @@
        \frenchchapter{chapter}%
      \fi
    } 
+\fi
+%    \end{macrocode}
+%
+% \marginpar{No single letter}
+%
+%
+%    \begin{macrocode}
+\if@impnattypo@nosingleletter
+   \ifluatex
+      \usepackage{luatexbase}
+      \usepackage{luacode}
+      \begin{luacode}
+      
+      local prevent_single_letter = function (head)
+        while head do
+          if head.id == 37 then                                -- glyph
+            if head.prev.id == 10 and head.next.id == 10 then  -- only if we are at a one letter word
+      
+              local p = node.new("penalty")
+              p.penalty = 10000
+      
+              -- Uncomment the next lines to show the position of the ~'s 
+              -- local p = node.new("rule")
+              -- p.width  = 2* 2^16
+              -- p.height =    2^16
+              -- p.depth  =    2^16
+      
+              p.next = head.next
+              head.next.prev = p
+              head.next = p
+      
+            end
+          end
+          head = head.next
+        end
+        return true
+      end
+      
+      luatexbase.add_to_callback("pre_linebreak_filter",prevent_single_letter,"~")
+      \end{luacode}
+   \else
+      \PackageError{The nosingleletter option only works with LuaTeX}
+   \fi
 \fi
 %    \end{macrocode}
 %

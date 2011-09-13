@@ -15,6 +15,8 @@ SOURCEFILES   = $(CONTRIBUTION).dtx $(CONTRIBUTION).ins $(CONTRIBUTION)-test.tex
 PKGFILES      = $(CONTRIBUTION).sty
 DOCFILES      = $(CONTRIBUTION).pdf $(CONTRIBUTION)-test.pdf
 
+TEXINSTALLDIR = /usr/local/texlive/texmf-local
+
 export CONTRIBUTION VERSION NAME EMAIL SUMMARY DIRECTORY DONOTANNOUNCE ANNOUNCE NOTES LICENSE FREEVERSION FILE
 
 # default rule
@@ -36,6 +38,13 @@ $(CONTRIBUTION).pdf: $(CONTRIBUTION).sty
 
 upload: ctanify
 	$(CTANUPLOAD) -p
+
+%.tds.zip: %.tar.gz
+	tar xzf $< $@
+
+install: $(CONTRIBUTION).tds.zip
+	unzip $< -d $(TEXINSTALLDIR)
+	mktexlsr
 
 clean:
 	rm -f *.aux *.glo *.idx *.log

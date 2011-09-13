@@ -93,7 +93,7 @@
 %
 % C'est le but de ce paquet, qui implémente plusieurs règles
 % édictées dans ce lexique afin de les rendre plus facilement applicables
-% aux textes édités avec \LaTeX
+% aux textes édités avec \LaTeX.
 %
 % \section{Utilisation}
 %
@@ -122,7 +122,7 @@
 % \end{verbatim}
 %
 % Il est également recommendé d'éviter les coupures isolant une lettre.
-% La solution donnée fournie par Patrick Gundlach\footnote{\url{http://tex.stackexchange.com/users/243/patrick}}
+% La solution proposée par Patrick Gundlach\footnote{\url{http://tex.stackexchange.com/users/243/patrick}}
 % sur tex.stackexchange.com\footnote{\url{http://tex.stackexchange.com/questions/27780/one-letter-word-at-the-end-of-line}}
 % permet de remédier à cela en utilisant \LuaTeX. Pour activer cette
 % fonctionalité, il faut utiliser l'option \texttt{nosingleletter}:
@@ -130,6 +130,9 @@
 % \begin{verbatim}
 %    \usepackage[nosingleletter]{impnattypo}
 % \end{verbatim}
+%
+% Lorsque cette option est activée, seul \LuaTeX{} (via la commande |lualatex|)
+% pourra effectuer le rendu du document.
 %
 % \subsection{Numérotation des chapitres}
 %
@@ -155,6 +158,18 @@
 % \end{verbatim}
 % 
 %
+% \subsection{Lignes orphelines}
+%
+% Il est fortement recommendé de ne pas laisser de lignes orphelines
+% dans un document. Pour cela, nous vous conseillons d'utiliser le paquet
+% |nowidow|:
+%
+% \begin{verbatim}
+%    \usepackage[all]{nowidow}
+% \end{verbatim}
+%
+% Voir la documentation de ce paquet pour plus d'options.
+% 
 %
 % \StopEventually{}
 %

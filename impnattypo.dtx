@@ -26,12 +26,12 @@
 %<package>\NeedsTeXFormat{LaTeX2e}[1999/12/01]
 %<package>\ProvidesPackage{impnattypo}
 %<*package>
-    [2011/09/13 0.2 Recommendations typographiques de l'Imprimerie Nationale Française]
+    [2011/09/13 0.3 Recommendations typographiques de l'Imprimerie Nationale Française]
 %</package>
 %
 %<*driver>
 \documentclass{ltxdoc}
-\usepackage[hyphenation,nosingleletter]{impnattypo}[2011/09/13]
+\usepackage[hyphenation,nosingleletter,parindent,lastparline]{impnattypo}[2011/09/13]
 \usepackage[french]{babel}
 \usepackage{fontspec}
 \setmainfont{Linux Libertine O}
@@ -48,7 +48,7 @@
 %</driver>
 % \fi
 %
-% \CheckSum{41}
+% \CheckSum{66}
 %
 % \CharacterTable
 %  {Upper-case    \A\B\C\D\E\F\G\H\I\J\K\L\M\N\O\P\Q\R\S\T\U\V\W\X\Y\Z
@@ -67,6 +67,7 @@
 %   Right brace   \}     Tilde         \~}
 %
 %
+% \changes{0.3}{2011/09/13}{Add parindent and lastparline options}
 % \changes{0.2}{2011/09/13}{Add nosingleletter option}
 % \changes{0.1}{2011/09/11}{First version}
 %
@@ -107,6 +108,7 @@
 %
 % \subsection{Césures}
 %
+% \DescribeMacro{hyphenation}
 % En dehors des règles générales de coupure des mots, le lexique indique
 % qu'il faut \og [éviter] les coupures de mots sur plus de trois lignes
 % consécutives \fg{}.
@@ -121,9 +123,39 @@
 %    \usepackage[hyphenation]{impnattypo}
 % \end{verbatim}
 %
+%
+% \subsection{Formatage des paragraphes}
+%
+% \DescribeMacro{parindent}
+% Le lexique conseille une indentation des paragraphes de 1em.
+% Ce réglage de |\parindent| peut être obtenu par l'utilisation
+% de l'option \texttt{parindent}:
+%
+% \begin{verbatim}
+%    \usepackage[parindent]{impnattypo}
+% \end{verbatim}
+%
+% \DescribeMacro{lastparline}
+% De plus, il est indiqué dans la section \og Coupure des mots \fg{}
+% que \og la dernière ligne d'un alinéa doit comporter un mot ou
+% une fin de mot de longueur au moins égale au double du renfoncement
+% de l'alinéa suivant. \fg{} À défaut d'implémenter exactement cette
+% solution, l'option \texttt{lastparline} s'assure que la dernière
+% ligne d'un alinéa est au moins aussi longue que le double
+% de la valeur de |\parindent|.\footnote{\url{http://tex.stackexchange.com/questions/28357/ensure-minimal-length-of-last-line}}
+%
+% Lorsque \LuaTeX est utilisé, la solution de Patrick Gundlach\footnote{\url{http://tex.stackexchange.com/questions/28357/ensure-minimal-length-of-last-line/28361\#28361}}
+% est utilisée. Avec les autres moteurs de rendu, c'est la solution native de
+% Enrico Gregorio\footnote{\url{http://tex.stackexchange.com/questions/28357/ensure-minimal-length-of-last-line/28358\#28358}}
+% qui fait office d'implémentation:
+%
+% \begin{verbatim}
+%    \usepackage[lastparline]{impnattypo}
+% \end{verbatim}
+%
+% \DescribeMacro{nosingleletter}
 % Il est également recommendé d'éviter les coupures isolant une lettre.
-% La solution proposée par Patrick Gundlach\footnote{\url{http://tex.stackexchange.com/users/243/patrick}}
-% sur tex.stackexchange.com\footnote{\url{http://tex.stackexchange.com/questions/27780/one-letter-word-at-the-end-of-line}}
+% La solution proposée par Patrick Gundlach\footnote{\url{http://tex.stackexchange.com/questions/27780/one-letter-word-at-the-end-of-line}}
 % permet de remédier à cela en utilisant \LuaTeX. Pour activer cette
 % fonctionalité, il faut utiliser l'option \texttt{nosingleletter}:
 %
@@ -136,6 +168,7 @@
 %
 % \subsection{Numérotation des chapitres}
 %
+% \DescribeMacro{frenchchapters}
 % Concernant la numérotation des chapitres, le lexique indique:
 % \og Dans un titre, on compose en chiffres romains grandes capitales
 % les numéros de chapitres, à l'exception de l'ordinal \og premier \fg{}
@@ -188,6 +221,10 @@
 \DeclareOption{hyphenation}{\@impnattypo@hyphenationtrue}
 \newif\if@impnattypo@nosingleletter
 \DeclareOption{nosingleletter}{\@impnattypo@nosinglelettertrue}
+\newif\if@impnattypo@parindent
+\DeclareOption{parindent}{\@impnattypo@parindenttrue}
+\newif\if@impnattypo@lastparline
+\DeclareOption{lastparline}{\@impnattypo@lastparlinetrue}
 \ProcessOptions
 \if@impnattypo@hyphenation
 %    \end{macrocode}
@@ -220,12 +257,10 @@
 %
 % \marginpar{No single letter}
 %
-%
 %    \begin{macrocode}
 \if@impnattypo@nosingleletter
    \ifluatex
-      \usepackage{luatexbase}
-      \usepackage{luacode}
+      \usepackage{luatexbase,luacode}
       \begin{luacode}
       
       local prevent_single_letter = function (head)
@@ -261,6 +296,47 @@
 \fi
 %    \end{macrocode}
 %
+% \marginpar{Paragraph indentation}
+%
+%    \begin{macrocode}
+\if@impnattypo@parindent
+\setlength{\parindent}{1em}
+\fi
+%    \end{macrocode}
+%
+% \marginpar{Last line of paragraph}
+%
+%    \begin{macrocode}
+\if@impnattypo@lastparline
+   \ifluatex
+      \usepackage{luatexbase,luacode}
+      \begin{luacode}
+      last_line_twice_parindent = function (head)
+        while head do
+          local _w,_h,_d = node.dimensions(head)
+          if head.id == 10 and head.subtype ~= 15 and (_w < 2 * tex.parindent) then
+      
+              -- we are at a glue and have less then 2*\parindent to go
+              local p = node.new("penalty")
+              p.penalty = 10000
+              p.next = head
+              head.prev.next = p
+              p.prev = head.prev
+              head.prev = p
+          end
+      
+          head = head.next
+        end
+        return true
+      end
+      
+      luatexbase.add_to_callback("pre_linebreak_filter",last_line_twice_parindent,"lastparline")
+      \end{luacode}
+   \else
+      \setlength{\parfillskip}{0pt plus\dimexpr\textwidth-2\parindent}
+   \fi
+\fi
+%    \end{macrocode}
 %
 % \iffalse
 %</package>

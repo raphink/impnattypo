@@ -215,20 +215,20 @@
 %    \begin{macrocode}
 \ProvidesPackage{impnattypo}
 \usepackage{ifluatex}
-\newif\if@impnattypo@draft
-\DeclareOption{draft}{\@impnattypo@drafttrue}
-\newif\if@impnattypo@frenchchapters
-\DeclareOption{frenchchapters}{\@impnattypo@frenchchapterstrue}
-\newif\if@impnattypo@hyphenation
-\DeclareOption{hyphenation}{\@impnattypo@hyphenationtrue}
-\newif\if@impnattypo@nosingleletter
-\DeclareOption{nosingleletter}{\@impnattypo@nosinglelettertrue}
-\newif\if@impnattypo@parindent
-\DeclareOption{parindent}{\@impnattypo@parindenttrue}
-\newif\if@impnattypo@lastparline
-\DeclareOption{lastparline}{\@impnattypo@lastparlinetrue}
+\newif\ifimpnattypodraft
+\DeclareOption{draft}{\impnattypodrafttrue}
+\newif\ifimpnattypofrenchchapters
+\DeclareOption{frenchchapters}{\impnattypofrenchchapterstrue}
+\newif\ifimpnattypohyphenation
+\DeclareOption{hyphenation}{\impnattypohyphenationtrue}
+\newif\ifimpnattyponosingleletter
+\DeclareOption{nosingleletter}{\impnattyponosinglelettertrue}
+\newif\ifimpnattypoparindent
+\DeclareOption{parindent}{\impnattypoparindenttrue}
+\newif\ifimpnattypolastparline
+\DeclareOption{lastparline}{\impnattypolastparlinetrue}
 \ProcessOptions
-\if@impnattypo@hyphenation
+\ifimpnattypohyphenation
 %    \end{macrocode}
 %
 % \marginpar{No page finishes with an hyphenated word}
@@ -245,7 +245,7 @@
 % \marginpar{Number chapters}
 %
 %    \begin{macrocode}
-\if@impnattypo@frenchchapters
+\ifimpnattypofrenchchapters
    \let\frenchchapter\Roman
    \renewcommand{\thechapter}{%                                                    
      \ifnum\value{chapter}=1
@@ -260,7 +260,7 @@
 % \marginpar{No single letter}
 %
 %    \begin{macrocode}
-\if@impnattypo@nosingleletter
+\ifimpnattyponosingleletter
    \ifluatex
       \usepackage{luatexbase,luacode}
       \begin{luacode}
@@ -273,7 +273,7 @@
               local p = node.new("penalty")
               p.penalty = 10000
 
-              \if@impnattypo@draft
+              \ifimpnattypodraft
                  local w = node.new("whatsit","pdf_literal")
                  w.data = "q 1 0 1 RG 1 0 1 rg 0 0 m 0 5 l 2 5 l 2 0 l b Q"
    
@@ -300,7 +300,7 @@
 % \marginpar{Paragraph indentation}
 %
 %    \begin{macrocode}
-\if@impnattypo@parindent
+\ifimpnattypoparindent
 \setlength{\parindent}{1em}
 \fi
 %    \end{macrocode}
@@ -308,7 +308,7 @@
 % \marginpar{Last line of paragraph}
 %
 %    \begin{macrocode}
-\if@impnattypo@lastparline
+\ifimpnattypolastparline
    \ifluatex
       \usepackage{luatexbase,luacode}
       \begin{luacode}
@@ -321,7 +321,7 @@
               local p = node.new("penalty")
               p.penalty = 10000
 
-              \if@impnattypo@draft
+              \ifimpnattypodraft
                  local w = node.new("whatsit","pdf_literal")
                  w.data = "q 0 1 1 RG 0 1 1 rg 0 0 m 0 5 l 2 5 l 2 0 l b Q"
    

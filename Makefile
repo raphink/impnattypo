@@ -11,9 +11,9 @@ LICENSE       = free
 FREEVERSION   = lppl
 FILE          = $(CONTRIBUTION).tar.gz
 
-SOURCEFILES   = $(CONTRIBUTION).dtx $(CONTRIBUTION).ins $(CONTRIBUTION)-test.tex
+SOURCEFILES   = $(CONTRIBUTION).dtx $(CONTRIBUTION).ins
 PKGFILES      = $(CONTRIBUTION).sty
-DOCFILES      = $(CONTRIBUTION).pdf $(CONTRIBUTION)-test.pdf
+DOCFILES      = $(CONTRIBUTION).pdf
 
 TEXINSTALLDIR = /usr/local/texlive/texmf-local
 
@@ -45,6 +45,8 @@ upload: ctanify
 install: $(CONTRIBUTION).tds.zip
 	unzip $< -d $(TEXINSTALLDIR)
 	mktexlsr
+
+test: $(CONTRIBUTION)-test.pdf
 
 clean:
 	rm -f *.aux *.glo *.idx *.log

@@ -272,14 +272,23 @@
               p.penalty = 10000
       
               -- Uncomment the next lines to show the position of the ~'s 
-              -- local p = node.new("rule")
-              -- p.width  = 2* 2^16
-              -- p.height =    2^16
-              -- p.depth  =    2^16
-      
-              p.next = head.next
-              head.next.prev = p
-              head.next = p
+              local p = node.new("rule")
+              p.width  = 2* 2^16
+              p.height =    2^16
+              p.depth  =    2^16
+
+              local w1 = node.new("whatsit","pdf_literal")
+              w1.data = "q 1 0 1 rg"
+              local w2 = node.new("whatsit","pdf_literal")
+              w2.data = "Q"
+
+              w2.next = head.next
+              head.next.prev = w1
+              head.next = w1
+              w1.next = p
+              p.prev = w1
+              p.next = w2
+              w2.prev = p
       
             end
           end
@@ -319,10 +328,28 @@
               -- we are at a glue and have less then 2*\parindent to go
               local p = node.new("penalty")
               p.penalty = 10000
-              p.next = head
-              head.prev.next = p
-              p.prev = head.prev
-              head.prev = p
+              local p = node.new("rule")
+              p.width  = 2* 2^16
+              p.height =    2^16
+              p.depth  =    2^16
+
+              local w1 = node.new("whatsit","pdf_literal")
+              w1.data = "q 0 1 1 rg"
+              local w2 = node.new("whatsit","pdf_literal")
+              w2.data = "Q"
+
+              w2.next = head.next
+              head.next.prev = w1
+              head.next = w1
+              w1.next = p
+              p.prev = w1
+              p.next = w2
+              w2.prev = p
+
+              -- p.next = head
+              -- head.prev.next = p
+              -- p.prev = head.prev
+              -- head.prev = p
           end
       
           head = head.next

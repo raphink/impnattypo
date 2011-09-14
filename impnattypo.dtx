@@ -31,9 +31,10 @@
 %
 %<*driver>
 \documentclass{ltxdoc}
-\usepackage[hyphenation,nosingleletter,parindent,lastparline]{impnattypo}[2011/09/13]
+\usepackage[draft,hyphenation,nosingleletter,parindent,lastparline]{impnattypo}[2011/09/13]
 \usepackage[french]{babel}
 \usepackage{fontspec}
+\usepackage[svgnames]{xcolor}
 \setmainfont{Linux Libertine O}
 \usepackage{metalogo}
 \usepackage[all]{nowidow}
@@ -48,7 +49,7 @@
 %</driver>
 % \fi
 %
-% \CheckSum{66}
+% \CheckSum{76}
 %
 % \CharacterTable
 %  {Upper-case    \A\B\C\D\E\F\G\H\I\J\K\L\M\N\O\P\Q\R\S\T\U\V\W\X\Y\Z
@@ -87,12 +88,14 @@
 % le \emph{Lexique des règles typographiques en usage à l'Imprimerie Nationale}
 % est une référence incontournable.
 %
-% Si la majorité des recommendations de cet ouvrage concerne la ponctuation,
-% l'usage des petites capitales ou encore l'ordre des parties d'un livre,
-% certaines autres recommendations méritent d'être automatisées pour être
+% Si la majorité des recommendations de cet ouvrage est implémentée dans 
+% le module \textsf{frenchb} pour \textsf{babel},
+% certaines autres recommendations méritent encore d'être automatisées pour être
 % implémentées en \LaTeX.
 %
-% C'est le but de ce paquet, qui implémente plusieurs règles
+% C'est le but de ce paquet, initié par une question sur le site
+% tex.stackexchange.com\footnote{\url{http://tex.stackexchange.com/questions/20493/french-typography-recommendations}},
+% et qui implémente plusieurs règles
 % édictées dans ce lexique afin de les rendre plus facilement applicables
 % aux textes édités avec \LaTeX.
 %
@@ -202,7 +205,32 @@
 % \end{verbatim}
 %
 % Voir la documentation de ce paquet pour plus d'options.
-% 
+%
+%
+% \subsection{Mode brouillon}
+%
+% \DescribeMacro{draft}
+% Le paquet \textsf{impnattypo} dispose d'un mode brouillon
+% permettant de visualiser les pénalités (espaces insécables)
+% ajoutés par les options \texttt{nosingleletter} et 
+% \texttt{lastparline}. En mode brouillon,
+% les emplacements des espaces insécables insérés
+% sont marqués par des rectangles de couleur.
+%
+% Pour activer le mode brouillon, utilisez l'option \texttt{draft},
+% par exemple:
+%
+% \begin{verbatim}
+%    \usepackage[draft,lastparline]{impnattypo}
+% \end{verbatim}
+%
+% Les pénalités insérées par l'option \texttt{nosingleletter}
+% apparaissent alors en {\color{Magenta}magenta}, et les pénalités insérées
+% par l'option \texttt{lastparline} sont signalées en {\color{Turquoise}turquoise}.
+%
+% Cette document est générée avec l'option \texttt{draft} afin d'en
+% montrer les effets.
+%
 %
 % \StopEventually{}
 %
@@ -214,7 +242,7 @@
 %
 %    \begin{macrocode}
 \ProvidesPackage{impnattypo}
-\usepackage{ifluatex}
+\RequirePackage{ifluatex}
 \newif\ifimpnattypodraft
 \DeclareOption{draft}{\impnattypodrafttrue}
 \newif\ifimpnattypofrenchchapters
@@ -262,7 +290,7 @@
 %    \begin{macrocode}
 \ifimpnattyponosingleletter
    \ifluatex
-      \usepackage{luatexbase,luacode}
+      \RequirePackage{luatexbase,luacode}
       \begin{luacode}
       
       local prevent_single_letter = function (head)
@@ -310,7 +338,7 @@
 %    \begin{macrocode}
 \ifimpnattypolastparline
    \ifluatex
-      \usepackage{luatexbase,luacode}
+      \RequirePackage{luatexbase,luacode}
       \begin{luacode}
       last_line_twice_parindent = function (head)
         while head do
@@ -325,10 +353,9 @@
                  local w = node.new("whatsit","pdf_literal")
                  w.data = "q 0 1 1 RG 0 1 1 rg 0 0 m 0 5 l 2 5 l 2 0 l b Q"
    
-                 node.insert_after(head,head,w)
+                 node.insert_after(head,head.prev,w)
                  node.insert_after(head,w,p)
               \else
-                 -- node.insert_after(head,head,p)
                  p.next = head
                  head.prev.next = p
                  p.prev = head.prev

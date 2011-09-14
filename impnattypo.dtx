@@ -357,10 +357,7 @@
                  node.insert_after(head,head.prev,w)
                  node.insert_after(head,w,p)
               \else
-                 p.next = head
-                 head.prev.next = p
-                 p.prev = head.prev
-                 head.prev = p
+                 node.insert_after(head,head.prev,p)
               \fi
           end
       

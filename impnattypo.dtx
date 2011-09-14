@@ -215,6 +215,8 @@
 %    \begin{macrocode}
 \ProvidesPackage{impnattypo}
 \usepackage{ifluatex}
+\newif\if@impnattypo@draft
+\DeclareOption{draft}{\@impnattypo@drafttrue}
 \newif\if@impnattypo@frenchchapters
 \DeclareOption{frenchchapters}{\@impnattypo@frenchchapterstrue}
 \newif\if@impnattypo@hyphenation
@@ -271,11 +273,15 @@
               local p = node.new("penalty")
               p.penalty = 10000
 
-              local w = node.new("whatsit","pdf_literal")
-              w.data = "q 1 0 1 RG 1 0 1 rg 0 0 m 0 5 l 2 5 l 2 0 l b Q"
-
-              node.insert_after(head,head,w)
-              node.insert_after(head,w,p)
+              \if@impnattypo@draft
+                 local w = node.new("whatsit","pdf_literal")
+                 w.data = "q 1 0 1 RG 1 0 1 rg 0 0 m 0 5 l 2 5 l 2 0 l b Q"
+   
+                 node.insert_after(head,head,w)
+                 node.insert_after(head,w,p)
+              \else
+                 node.insert_after(head,head,p)
+              \fi
             end
           end
           head = head.next
@@ -315,11 +321,19 @@
               local p = node.new("penalty")
               p.penalty = 10000
 
-              local w = node.new("whatsit","pdf_literal")
-              w.data = "q 0 1 1 RG 0 1 1 rg 0 0 m 0 5 l 2 5 l 2 0 l b Q"
-
-              node.insert_after(head,head,w)
-              node.insert_after(head,w,p)
+              \if@impnattypo@draft
+                 local w = node.new("whatsit","pdf_literal")
+                 w.data = "q 0 1 1 RG 0 1 1 rg 0 0 m 0 5 l 2 5 l 2 0 l b Q"
+   
+                 node.insert_after(head,head,w)
+                 node.insert_after(head,w,p)
+              \else
+                 -- node.insert_after(head,head,p)
+                 p.next = head
+                 head.prev.next = p
+                 p.prev = head.prev
+                 head.prev = p
+              \fi
           end
       
           head = head.next

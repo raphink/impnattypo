@@ -314,28 +314,12 @@
               -- we are at a glue and have less then 2*\parindent to go
               local p = node.new("penalty")
               p.penalty = 10000
-              local p = node.new("rule")
-              p.width  = 2* 2^16
-              p.height =    2^16
-              p.depth  =    2^16
 
-              local w1 = node.new("whatsit","pdf_literal")
-              w1.data = "q 0 1 1 rg"
-              local w2 = node.new("whatsit","pdf_literal")
-              w2.data = "Q"
+              local w = node.new("whatsit","pdf_literal")
+              w.data = "q 0 1 1 RG 0 1 1 rg 0 0 m 0 5 l 2 5 l 2 0 l b Q"
 
-              w2.next = head.next
-              head.next.prev = w1
-              head.next = w1
-              w1.next = p
-              p.prev = w1
-              p.next = w2
-              w2.prev = p
-
-              -- p.next = head
-              -- head.prev.next = p
-              -- p.prev = head.prev
-              -- head.prev = p
+              node.insert_after(head,head,w)
+              node.insert_after(head,w,p)
           end
       
           head = head.next

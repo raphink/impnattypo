@@ -296,21 +296,23 @@
       
       local prevent_single_letter = function (head)
         while head do
-          if head.id == 37 then                                -- glyph
-            if head.prev.id == 10 and head.next.id == 10 then  -- only if we are at a one letter word
-
-              local p = node.new("penalty")
-              p.penalty = 10000
-
-              \ifimpnattypodraft
-                 local w = node.new("whatsit","pdf_literal")
-                 w.data = "q 1 0 1 RG 1 0 1 rg 0 0 m 0 5 l 2 5 l 2 0 l b Q"
+          if head.id == 37 then                                                                          -- glyph
+            if (head.char >= 65 and head.char <= 122) or (head.char >= 192 and head.char <= 255) then    -- some kind of letter
+               if head.prev.id == 10 and head.next.id == 10 then                                         -- only if we are at a one letter word
    
-                 node.insert_after(head,head,w)
-                 node.insert_after(head,w,p)
-              \else
-                 node.insert_after(head,head,p)
-              \fi
+                 local p = node.new("penalty")
+                 p.penalty = 10000
+   
+                 \ifimpnattypodraft
+                    local w = node.new("whatsit","pdf_literal")
+                    w.data = "q 1 0 1 RG 1 0 1 rg 0 0 m 0 5 l 2 5 l 2 0 l b Q"
+      
+                    node.insert_after(head,head,w)
+                    node.insert_after(head,w,p)
+                 \else
+                    node.insert_after(head,head,p)
+                 \fi
+               end
             end
           end
           head = head.next

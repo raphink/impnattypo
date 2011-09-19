@@ -447,7 +447,7 @@
         
               if head1.id == 37 then -- glyph
                  char_count = char_count + 1
-              elseif head1.id == 10 then -- glue
+              elseif char_count > 0 and head1.id == 10 then -- glue
                  word_count = word_count + 1
               end
               head1 = head1.next

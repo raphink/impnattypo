@@ -49,7 +49,7 @@
 %</driver>
 % \fi
 %
-% \CheckSum{90}
+% \CheckSum{96}
 %
 % \CharacterTable
 %  {Upper-case    \A\B\C\D\E\F\G\H\I\J\K\L\M\N\O\P\Q\R\S\T\U\V\W\X\Y\Z
@@ -158,6 +158,11 @@
 %    \usepackage[lastparline]{impnattypo}
 % \end{verbatim}
 %
+% Lorsque l'option \texttt{draft} est activée et que \LuaTeX est utilisé,
+% les espaces insécables insérés sont colorés en
+% {\color{\impnattypolastparlinecolor}\impnattypolastparlinecolor}.
+% La couleur utilisée peut être ajustée par l'option \texttt{lastparlinecolor}.
+%
 % \DescribeMacro{nosingleletter}
 % Il est également recommendé d'éviter les coupures isolant une lettre.
 % La solution proposée par Patrick Gundlach\footnote{\url{http://tex.stackexchange.com/questions/27780/one-letter-word-at-the-end-of-line}}
@@ -170,6 +175,11 @@
 %
 % Lorsque cette option est activée, seul \LuaTeX{} (via la commande |lualatex|)
 % pourra effectuer le rendu du document.
+%
+% Lorsque l'option \texttt{draft} est activée,
+% les espaces insécables insérés sont colorés en
+% {\color{\impnattyponosinglelettercolor}\impnattyponosinglelettercolor}.
+% La couleur utilisée peut être ajustée par l'option \texttt{nosinglelettercolor}.
 %
 % \DescribeMacro{homeoarchy}
 % Lorsque deux lignes consécutives commencent par le même mot
@@ -186,6 +196,23 @@
 % \begin{verbatim}
 %    \usepackage[homeoarchy]{impnattypo}
 % \end{verbatim}
+%
+% Cette option n'est effective que si l'option \texttt{draft} est activée.
+%
+% Les espaces insécables insérés sont colorés de deux couleurs.
+% Les mots entiers sont colorés en 
+% {\color{\impnattypohomeoarchywordcolor}\impnattypohomeoarchywordcolor}
+% et cette couleur peut être ajustée par l'option \texttt{homeoarchywordcolor}.
+% Les mots partiels sont colorés en
+% {\color{\impnattypohomeoarchycharcolor}\impnattypohomeoarchycharcolor}
+% et cette couleur peut être ajustée par l'option \texttt{homeoarchycharcolor}.
+%
+% Une séquence de glyphes est considéré comme problématique si:
+%
+% \begin{itemize}
+%   \item Le nombre de mots entiers matchant est supérieur à \impnattypohomeoarchymaxwords. Ce paramètre peut être ajusté par l'option \texttt{homeoarchymaxwords};
+%   \item Le nombre de caractères matchant est supérieur à \impnattypohomeoarchymaxchars. Ce paramètre peut être ajusté par l'option \texttt{homeoarchymaxchars};
+% \end{itemize}
 %
 %
 % \subsection{Numérotation des chapitres}
@@ -278,6 +305,8 @@
 \DeclareStringOption[orange]{homeoarchycharcolor}
 \DeclareStringOption[Magenta]{nosinglelettercolor}
 \DeclareStringOption[Turquoise]{lastparlinecolor}
+\DeclareStringOption[1]{homeoarchymaxwords}
+\DeclareStringOption[3]{homeoarchymaxchars}
 \ProcessKeyvalOptions*
 \RequirePackage{xcolor}
 \def\usecolor#1{\csname\string\color@#1\endcsname\space}
@@ -404,6 +433,7 @@
 %
 %    \begin{macrocode}
 \ifimpnattypohomeoarchy
+ \ifimpnattypodraft
    \ifluatex
       \RequirePackage{luatexbase,luacode}
       \begin{luacode}
@@ -450,8 +480,8 @@
         local cur_line = head
         local prev_line -- initiate prev_head
      
-        local max_char = 3
-        local max_word = 1
+        local max_char = tonumber(\impnattypohomeoarchymaxchars)
+        local max_word = tonumber(\impnattypohomeoarchymaxwords)
      
         while head do
           if head.id == 0 then -- new line
@@ -499,6 +529,7 @@
    \else
       \PackageError{The homeoarchy option only works with LuaTeX}
    \fi
+ \fi
 \fi
 %    \end{macrocode}
 %

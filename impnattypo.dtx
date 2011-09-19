@@ -486,7 +486,7 @@
             if prev_line.id == 0 then
                char_count,word_count,prev_head,cur_head = compare_lines(prev_line,cur_line)
                if char_count >= max_char or word_count >= max_word then
-                  w1_prev = node.new("whatsit","pdf_literal")
+                  local w1_prev = node.new("whatsit","pdf_literal")
                   if word_count >= max_word then
                      w1_prev.data = "q \usecolor{\impnattypohomeoarchywordcolor}"
                   else
@@ -494,18 +494,18 @@
                   end
                   w1_prev.mode = 1
      
-                  w2_prev = node.new("whatsit","pdf_literal")
+                  local w2_prev = node.new("whatsit","pdf_literal")
                   w2_prev.data = "Q"
                   w2_prev.mode = 1
      
                   node.insert_after(prev_line.prev,prev_line.prev,w1_prev)
                   node.insert_before(prev_line,prev_head,w2_prev)
      
-                  w1_cur = node.new("whatsit","pdf_literal")
+                  local w1_cur = node.new("whatsit","pdf_literal")
                   w1_cur.data = "q 0 1 1 rg"
                   w1_prev.mode = 1
      
-                  w2_cur = node.new("whatsit","pdf_literal")
+                  local w2_cur = node.new("whatsit","pdf_literal")
                   w2_cur.data = "Q"
                   w2_cur.mode = 1
      

@@ -171,6 +171,23 @@
 % Lorsque cette option est activée, seul \LuaTeX{} (via la commande |lualatex|)
 % pourra effectuer le rendu du document.
 %
+% \DescribeMacro{homeoarchy}
+% Lorsque deux lignes consécutives commencent par le même mot
+% ou la même série de lettres, cela peut induire le lecteur
+% en erreur et cela est donc à éviter.
+%
+% La correction automatique de ce phénomène est très complexe
+% et en général non souhaitable. C'est pourquoi l'option
+% \texttt{homeoarchy} de ce paquet se contente
+% de les détecter et de les afficher. Leur correction
+% consistera en général en l'introduction d'un
+% espace insécable dans le paragraphe.
+%
+% \begin{verbatim}
+%    \usepackage[homeoarchy]{impnattypo}
+% \end{verbatim}
+%
+%
 % \subsection{Numérotation des chapitres}
 %
 % \DescribeMacro{frenchchapters}

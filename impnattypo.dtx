@@ -468,7 +468,7 @@
                   w2_prev.data = "Q"
                   w2_prev.mode = 1
      
-                  node.insert_before(prev_line,prev_line.head.next,w1_prev)
+                  node.insert_after(prev_line.prev,prev_line.prev,w1_prev)
                   node.insert_before(prev_line,prev_head,w2_prev)
      
                   w1_cur = node.new("whatsit","pdf_literal")
@@ -479,7 +479,7 @@
                   w2_cur.data = "Q"
                   w2_cur.mode = 1
      
-                  --node.insert_before(cur_line,cur_line.head.next,w1_cur)
+                  --node.insert_after(cur_line.prev,cur_line.prev,w1_cur)
                   --node.insert_before(cur_line,cur_head,w2_cur)
      
                end

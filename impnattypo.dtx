@@ -31,12 +31,12 @@
 %
 %<*driver>
 \documentclass{ltxdoc}
-\usepackage[draft,hyphenation,nosingleletter,parindent,lastparline,homeoarchy]{impnattypo}[2011/09/19]
 \usepackage[french]{babel}
 \usepackage{fontspec}
 \usepackage[svgnames]{xcolor}
 \setmainfont{Linux Libertine O}
 \usepackage{metalogo}
+\usepackage[draft,hyphenation,nosingleletter,parindent,lastparline,homeoarchy]{impnattypo}[2011/09/19]
 \usepackage[all]{nowidow}
 \EnableCrossrefs
 \CodelineIndex
@@ -49,7 +49,7 @@
 %</driver>
 % \fi
 %
-% \CheckSum{89}
+% \CheckSum{90}
 %
 % \CharacterTable
 %  {Upper-case    \A\B\C\D\E\F\G\H\I\J\K\L\M\N\O\P\Q\R\S\T\U\V\W\X\Y\Z
@@ -262,27 +262,31 @@
 %    \begin{macrocode}
 \ProvidesPackage{impnattypo}
 \RequirePackage{ifluatex}
-\newif\ifimpnattypodraft
-\DeclareOption{draft}{\impnattypodrafttrue}
-\newif\ifimpnattypofrenchchapters
-\DeclareOption{frenchchapters}{\impnattypofrenchchapterstrue}
-\newif\ifimpnattypohyphenation
-\DeclareOption{hyphenation}{\impnattypohyphenationtrue}
-\newif\ifimpnattyponosingleletter
-\DeclareOption{nosingleletter}{\impnattyponosinglelettertrue}
-\newif\ifimpnattypoparindent
-\DeclareOption{parindent}{\impnattypoparindenttrue}
-\newif\ifimpnattypolastparline
-\DeclareOption{lastparline}{\impnattypolastparlinetrue}
-\newif\ifimpnattypohomeoarchy
-\DeclareOption{homeoarchy}{\impnattypohomeoarchytrue}
-\ProcessOptions
-\ifimpnattypohyphenation
+\RequirePackage{kvoptions}
+\SetupKeyvalOptions{
+   family=impnattypo,
+   prefix=impnattypo,
+}
+\DeclareBoolOption{draft}
+\DeclareBoolOption{frenchchapters}
+\DeclareBoolOption{hyphenation}
+\DeclareBoolOption{nosingleletter}
+\DeclareBoolOption{parindent}
+\DeclareBoolOption{lastparline}
+\DeclareBoolOption{homeoarchy}
+\DeclareStringOption[red]{homeoarchywordcolor}
+\DeclareStringOption[orange]{homeoarchycharcolor}
+\DeclareStringOption[Magenta]{nosinglelettercolor}
+\DeclareStringOption[Turquoise]{lastparlinecolor}
+\ProcessKeyvalOptions*
+\RequirePackage{xcolor}
+\def\usecolor#1{\csname\string\color@#1\endcsname\space}
 %    \end{macrocode}
 %
 % \marginpar{No page finishes with an hyphenated word}
 %
 %    \begin{macrocode}
+\ifimpnattypohyphenation
    \brokenpenalty=10000
 %    \end{macrocode}
 % \marginpar{Discourage hyphenation on two lines in a row}
@@ -325,7 +329,7 @@
    
                  \ifimpnattypodraft
                     local w = node.new("whatsit","pdf_literal")
-                    w.data = "q 1 0 1 RG 1 0 1 rg 0 0 m 0 5 l 2 5 l 2 0 l b Q"
+                    w.data = "q \usecolor{\impnattyponosinglelettercolor} 0 0 m 0 5 l 2 5 l 2 0 l b Q"
       
                     node.insert_after(head,head,w)
                     node.insert_after(head,w,p)
@@ -374,7 +378,7 @@
 
               \ifimpnattypodraft
                  local w = node.new("whatsit","pdf_literal")
-                 w.data = "q 0 1 1 RG 0 1 1 rg 0 0 m 0 5 l 2 5 l 2 0 l b Q"
+                 w.data = "q \usecolor{\impnattypolastparlinecolor} 0 0 m 0 5 l 2 5 l 2 0 l b Q"
    
                  node.insert_after(head,head.prev,w)
                  node.insert_after(head,w,p)
@@ -458,9 +462,9 @@
                if char_count >= max_char or word_count >= max_word then
                   w1_prev = node.new("whatsit","pdf_literal")
                   if word_count >= max_word then
-                     w1_prev.data = "q 1 0 0 rg"
+                     w1_prev.data = "q \usecolor{\impnattypohomeoarchywordcolor}"
                   else
-                     w1_prev.data = "q 0 1 1 rg"
+                     w1_prev.data = "q \usecolor{\impnattypohomeoarchycharcolor}"
                   end
                   w1_prev.mode = 1
      

@@ -471,8 +471,24 @@
         end
         return char_count,word_count,head1,head2
       end
+
+      highlight = function (line,nend,color)
+         local n = node.new("whatsit","pdf_literal")
+
+         -- get dimensions
+         local w,h,d = node.dimensions(line.head,nend)
+         local w_pts = w/65536 -- scaled points to points
+
+         -- set data
+         n.data = "q " .. color .. " 0 0 m 0 5 l " .. w_pts .. " 5 l " .. w_pts .. " 0 l b Q"
+
+         -- insert node
+         n.next = line.head
+         line.head = n 
+         node.slide(line.head)
+      end
      
-      homeoarchy = function ( head )
+      homeoarchy = function (head)
         local cur_line = head
         local prev_line -- initiate prev_head
      
@@ -486,32 +502,16 @@
             if prev_line.id == 0 then
                char_count,word_count,prev_head,cur_head = compare_lines(prev_line,cur_line)
                if char_count >= max_char or word_count >= max_word then
-                  local w1_prev = node.new("whatsit","pdf_literal")
+                  local color
                   if word_count >= max_word then
-                     w1_prev.data = "q \usecolor{\impnattypohomeoarchywordcolor}"
+                     color = "q \usecolor{\impnattypohomeoarchywordcolor}"
                   else
-                     w1_prev.data = "q \usecolor{\impnattypohomeoarchycharcolor}"
+                     color = "q \usecolor{\impnattypohomeoarchycharcolor}"
                   end
-                  w1_prev.mode = 1
-     
-                  local w2_prev = node.new("whatsit","pdf_literal")
-                  w2_prev.data = "Q"
-                  w2_prev.mode = 1
-     
-                  node.insert_after(prev_line.prev,prev_line.prev,w1_prev)
-                  node.insert_before(prev_line,prev_head,w2_prev)
-     
-                  local w1_cur = node.new("whatsit","pdf_literal")
-                  w1_cur.data = "q 0 1 1 rg"
-                  w1_prev.mode = 1
-     
-                  local w2_cur = node.new("whatsit","pdf_literal")
-                  w2_cur.data = "Q"
-                  w2_cur.mode = 1
-     
-                  --node.insert_after(cur_line.prev,cur_line.prev,w1_cur)
-                  --node.insert_before(cur_line,cur_head,w2_cur)
-     
+
+                  -- highlight both lines
+                  highlight(prev_line,prev_head,color)
+                  highlight(cur_line,cur_head,color)
                end
             end
           end

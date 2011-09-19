@@ -410,21 +410,31 @@
         local char_count = 0
         local word_count = 0
      
-        while (head1.id == 37 and head2.id == 37
-               and head1.char == head2.char)          -- identical glyph
-           or (head1.id == 10 and head2.id == 10) do  -- glue
-     
-           if head1.id == 37 then -- glyph
-              char_count = char_count + 1
-           elseif head1.id == 10 then -- glue
-              word_count = word_count + 1
+        while head1 and head2 do
+           if (head1.id == 37 and head2.id == 37
+                  and head1.char == head2.char)          -- identical glyph
+              or (head1.id == 10 and head2.id == 10) then  -- glue
+        
+              if head1.id == 37 then -- glyph
+                 char_count = char_count + 1
+              elseif head1.id == 10 then -- glue
+                 word_count = word_count + 1
+              end
+              head1 = head1.next
+              head2 = head2.next
+           elseif (head1.id == 0 or head2.id == 0) then -- end of line
+              break
+           elseif (head1.id ~= 37 and head1.id ~= 10) then -- some other kind of node
+              head1 = head1.next
+           elseif (head2.id ~= 37 and head2.id ~= 10) then -- some other kind of node
+              head2 = head2.next
+           else -- no match, no special node
+              break
            end
-           head1 = head1.next
-           head2 = head2.next
         end
         -- analyze last non-matching node, check for punctuation
-        if ((head1.id == 37 and head1.char > 49)
-             or (head2.id == 37 and head2.char > 49)) then
+        if ((head1 and head1.id == 37 and head1.char > 49)
+             or (head2 and head2.id == 37 and head2.char > 49)) then
            -- not a word
         elseif char_count > 0 then
            word_count = word_count + 1

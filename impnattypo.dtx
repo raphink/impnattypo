@@ -49,7 +49,7 @@
 %</driver>
 % \fi
 %
-% \CheckSum{100}
+% \CheckSum{102}
 %
 % \CharacterTable
 %  {Upper-case    \A\B\C\D\E\F\G\H\I\J\K\L\M\N\O\P\Q\R\S\T\U\V\W\X\Y\Z
@@ -183,15 +183,15 @@
 % La couleur utilisée peut être ajustée par l'option \texttt{nosinglelettercolor}.
 %
 % \DescribeMacro{homeoarchy}
-% Lorsque deux lignes consécutives commencent par le même mot
-% ou la même série de lettres, cela peut induire le lecteur
-% en erreur et cela est donc à éviter.
+% Lorsque deux lignes consécutives commencent ou finissent
+% par le même mot ou la même série de lettres,
+% cela peut induire le lecteur en erreur et cela est donc à éviter.
 %
 % La correction automatique de ce phénomène est très complexe
 % et en général non souhaitable. C'est pourquoi l'option
 % \texttt{homeoarchy} de ce paquet se contente
 % de les détecter et de les afficher. Leur correction
-% consistera en général en l'introduction d'un
+% consistera en général en l'introduction d'une
 % espace insécable dans le paragraphe.
 %
 % \begin{verbatim}
@@ -200,13 +200,16 @@
 %
 % Cette option n'est effective que si l'option \texttt{draft} est activée.
 %
-% Les espaces insécables insérés sont colorés de deux couleurs.
-% Les mots entiers sont colorés en 
+% Les espaces insécables insérées sont colorées de deux couleurs:
+%
+% \begin{itemize}
+% \item Les mots entiers sont colorés en 
 % {\color{\impnattypohomeoarchywordcolor}\impnattypohomeoarchywordcolor}
-% et cette couleur peut être ajustée par l'option \texttt{homeoarchywordcolor}.
-% Les mots partiels sont colorés en
+% et cette couleur peut être ajustée par l'option \texttt{homeoarchywordcolor};
+% \item Les mots partiels sont colorés en
 % {\color{\impnattypohomeoarchycharcolor}\impnattypohomeoarchycharcolor}
-% et cette couleur peut être ajustée par l'option \texttt{homeoarchycharcolor}.
+% et cette couleur peut être ajustée par l'option \texttt{homeoarchycharcolor};
+% \end{itemize}
 %
 % Une séquence de glyphes est considéré comme problématique si:
 %

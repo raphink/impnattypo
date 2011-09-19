@@ -26,12 +26,12 @@
 %<package>\NeedsTeXFormat{LaTeX2e}[1999/12/01]
 %<package>\ProvidesPackage{impnattypo}
 %<*package>
-    [2011/09/15 0.4 Recommendations typographiques de l'Imprimerie Nationale Française]
+    [2011/09/19 0.4 Recommendations typographiques de l'Imprimerie Nationale Française]
 %</package>
 %
 %<*driver>
 \documentclass{ltxdoc}
-\usepackage[draft,hyphenation,nosingleletter,parindent,lastparline]{impnattypo}[2011/09/15]
+\usepackage[draft,hyphenation,nosingleletter,parindent,lastparline,homeoarchy]{impnattypo}[2011/09/19]
 \usepackage[french]{babel}
 \usepackage{fontspec}
 \usepackage[svgnames]{xcolor}
@@ -49,7 +49,7 @@
 %</driver>
 % \fi
 %
-% \CheckSum{76}
+% \CheckSum{89}
 %
 % \CharacterTable
 %  {Upper-case    \A\B\C\D\E\F\G\H\I\J\K\L\M\N\O\P\Q\R\S\T\U\V\W\X\Y\Z
@@ -68,6 +68,7 @@
 %   Right brace   \}     Tilde         \~}
 %
 %
+% \changes{0.5}{2011/09/19}{Add homeoarchy detection}
 % \changes{0.4}{2011/09/15}{Add draft mode}
 % \changes{0.3}{2011/09/13}{Add parindent and lastparline options}
 % \changes{0.2}{2011/09/13}{Add nosingleletter option}
@@ -256,6 +257,8 @@
 \DeclareOption{parindent}{\impnattypoparindenttrue}
 \newif\ifimpnattypolastparline
 \DeclareOption{lastparline}{\impnattypolastparlinetrue}
+\newif\ifimpnattypohomeoarchy
+\DeclareOption{homeoarchy}{\impnattypohomeoarchytrue}
 \ProcessOptions
 \ifimpnattypohyphenation
 %    \end{macrocode}
@@ -372,6 +375,98 @@
       \end{luacode}
    \else
       \setlength{\parfillskip}{0pt plus\dimexpr\textwidth-2\parindent}
+   \fi
+\fi
+%    \end{macrocode}
+%
+% \marginpar{Detect homeoarchies}
+%
+%    \begin{macrocode}
+\ifimpnattypohomeoarchy
+   \ifluatex
+      \RequirePackage{luatexbase,luacode}
+      \begin{luacode}
+      compare_lines = function (line1,line2)
+        local head1 = line1.head
+        local head2 = line2.head
+     
+        local char_count = 0
+        local word_count = 0
+     
+        while (head1.id == 37 and head2.id == 37
+               and head1.char == head2.char)          -- identical glyph
+           or (head1.id == 10 and head2.id == 10) do  -- glue
+     
+           if head1.id == 37 then -- glyph
+              char_count = char_count + 1
+           elseif head1.id == 10 then -- glue
+              word_count = word_count + 1
+           end
+           head1 = head1.next
+           head2 = head2.next
+        end
+        -- analyze last non-matching node, check for punctuation
+        if ((head1.id == 37 and head1.char > 49)
+             or (head2.id == 37 and head2.char > 49)) then
+           -- not a word
+        elseif char_count > 0 then
+           word_count = word_count + 1
+        end
+        return char_count,word_count,head1,head2
+      end
+     
+      homeoarchy = function ( head )
+        local cur_line = head
+        local prev_line -- initiate prev_head
+     
+        local max_char = 3
+        local max_word = 1
+     
+        while head do
+          if head.id == 0 then -- new line
+            prev_line = cur_line
+            cur_line = head
+            if prev_line.id == 0 then
+               char_count,word_count,prev_head,cur_head = compare_lines(prev_line,cur_line)
+               if char_count >= max_char or word_count >= max_word then
+                  w1_prev = node.new("whatsit","pdf_literal")
+                  if word_count >= max_word then
+                     w1_prev.data = "q 1 0 0 rg"
+                  else
+                     w1_prev.data = "q 0 1 1 rg"
+                  end
+                  w1_prev.mode = 1
+     
+                  w2_prev = node.new("whatsit","pdf_literal")
+                  w2_prev.data = "Q"
+                  w2_prev.mode = 1
+     
+                  node.insert_before(prev_line,prev_line.head.next,w1_prev)
+                  node.insert_before(prev_line,prev_head,w2_prev)
+     
+                  w1_cur = node.new("whatsit","pdf_literal")
+                  w1_cur.data = "q 0 1 1 rg"
+                  w1_prev.mode = 1
+     
+                  w2_cur = node.new("whatsit","pdf_literal")
+                  w2_cur.data = "Q"
+                  w2_cur.mode = 1
+     
+                  --node.insert_before(cur_line,cur_line.head.next,w1_cur)
+                  --node.insert_before(cur_line,cur_head,w2_cur)
+     
+               end
+            end
+          end
+          head = head.next
+        end
+        return true
+      end
+     
+      luatexbase.add_to_callback("post_linebreak_filter",homeoarchy,"homeoarchy")
+      \end{luacode}
+   \else
+      \PackageError{The homeoarchy option only works with LuaTeX}
    \fi
 \fi
 %    \end{macrocode}

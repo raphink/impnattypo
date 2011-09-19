@@ -480,24 +480,14 @@
         local char_count = 0
         local word_count = 0
 
-        print("next line")
-
         while head1 and head2 do
-           print("next char")
-           print("head1 is of type " .. head1.id)
-           print("head2 is of type " .. head2.id)
-     
-           if head1.id == 37 then print("new char is " .. head1.char) end
            if (head1.id == 37 and head2.id == 37
                   and head1.char == head2.char)          -- identical glyph
               or (head1.id == 10 and head2.id == 10) then  -- glue
         
               if head1.id == 37 then -- glyph
-                 print("char1 is " .. head1.char)
-                 print("char2 is " .. head2.char)
                  char_count = char_count + 1
               elseif char_count > 0 and head1.id == 10 then -- glue
-                 print("glue")
                  word_count = word_count + 1
               end
               head1 = head1.prev
@@ -505,10 +495,12 @@
            elseif (head1.id == 0 or head2.id == 0) then -- start of line
               break
            elseif (head1.id ~= 37 and head1.id ~= 10) then -- some other kind of node
-              print("next head1")
               head1 = head1.prev
            elseif (head2.id ~= 37 and head2.id ~= 10) then -- some other kind of node
-              print("next head2")
+              head2 = head2.prev
+           elseif (head1.id == 37 and head1.char < 48) then -- punctuation
+              head1 = head1.prev
+           elseif (head2.id == 37 and head2.char < 48) then -- punctuation
               head2 = head2.prev
            else -- no match, no special node
               break
@@ -543,6 +535,7 @@
       highlight_reverse = function (nstart,line,color)
          local n = node.new("whatsit","pdf_literal")
 
+
          -- get dimensions
          local w,h,d = node.dimensions(nstart,node.tail(line.head))
          local w_pts = w/65536 -- scaled points to points
@@ -551,8 +544,7 @@
          n.data = "q " .. color .. " 0 0 m 0 5 l " .. w_pts .. " 5 l " .. w_pts .. " 0 l b Q"
 
          -- insert node
-         n.next = nstart
-         nstart.prev = n 
+         node.insert_after(line.head,nstart,n)
       end
      
       homeoarchy = function (head)
@@ -568,7 +560,6 @@
             cur_line = head
             if prev_line.id == 0 then
                -- homeoarchy
-               print("checking for homeoarchy")
                char_count,word_count,prev_head,cur_head = compare_lines(prev_line,cur_line)
                if char_count >= max_char or word_count >= max_word then
                   local color
@@ -597,27 +588,30 @@
      
         local max_char = tonumber(\impnattypohomeoarchymaxchars)
         local max_word = tonumber(\impnattypohomeoarchymaxwords)
+
+        local linecounter = 0
      
         while head do
           if head.id == 0 then -- new line
-            prev_line = cur_line
-            cur_line = head
-            if prev_line.id == 0 then
-               -- homoioteleuton
-               print("checking for homoioteleuton")
-               char_count,word_count,prev_head,cur_head = compare_lines_reverse(prev_line,cur_line)
-               print("done")
-               if char_count >= max_char or word_count >= max_word then
-                  local color
-                  if word_count >= max_word then
-                     color = "q \usecolor{\impnattypohomeoarchywordcolor}"
-                  else
-                     color = "q \usecolor{\impnattypohomeoarchycharcolor}"
+            linecounter = linecounter + 1
+            if linecounter > 1 then
+               prev_line = cur_line
+               cur_line = head
+               if prev_line.id == 0 then
+                  -- homoioteleuton
+                  char_count,word_count,prev_head,cur_head = compare_lines_reverse(prev_line,cur_line)
+                  if char_count >= max_char or word_count >= max_word then
+                     local color
+                     if word_count >= max_word then
+                        color = "q \usecolor{\impnattypohomeoarchywordcolor}"
+                     else
+                        color = "q \usecolor{\impnattypohomeoarchycharcolor}"
+                     end
+   
+                     -- highlight both lines
+                     highlight_reverse(prev_head,prev_line,color)
+                     highlight_reverse(cur_head,cur_line,color)
                   end
-
-                  -- highlight both lines
-                  highlight_reverse(prev_head,prev_line,color)
-                  highlight_reverse(cur_head,cur_line,color)
                end
             end
           end

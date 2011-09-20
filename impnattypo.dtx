@@ -36,7 +36,7 @@
 \usepackage[svgnames]{xcolor}
 \setmainfont{Linux Libertine O}
 \usepackage{metalogo}
-\usepackage[draft,hyphenation,nosingleletter,parindent,lastparline,homeoarchy]{impnattypo}[2011/09/19]
+\usepackage[draft,hyphenation,nosingleletter,parindent,lastparline,homeoarchy,rivers]{impnattypo}[2011/09/19]
 \usepackage[all]{nowidow}
 \EnableCrossrefs
 \CodelineIndex
@@ -49,7 +49,7 @@
 %</driver>
 % \fi
 %
-% \CheckSum{102}
+% \CheckSum{121}
 %
 % \CharacterTable
 %  {Upper-case    \A\B\C\D\E\F\G\H\I\J\K\L\M\N\O\P\Q\R\S\T\U\V\W\X\Y\Z
@@ -303,10 +303,12 @@
 \DeclareBoolOption{parindent}
 \DeclareBoolOption{lastparline}
 \DeclareBoolOption{homeoarchy}
+\DeclareBoolOption{rivers}
 \DeclareStringOption[red]{homeoarchywordcolor}
 \DeclareStringOption[orange]{homeoarchycharcolor}
 \DeclareStringOption[brown]{nosinglelettercolor}
 \DeclareStringOption[teal]{lastparlinecolor}
+\DeclareStringOption[blue]{riverscolor}
 \DeclareStringOption[1]{homeoarchymaxwords}
 \DeclareStringOption[3]{homeoarchymaxchars}
 \ProcessKeyvalOptions*
@@ -627,6 +629,97 @@
       end
      
       luatexbase.add_to_callback("post_linebreak_filter",homoioteleuton,"homoioteleuton")
+      \end{luacode}
+   \else
+      \PackageError{The homeoarchy option only works with LuaTeX}
+   \fi
+ \fi
+\fi
+%    \end{macrocode}
+%
+% \marginpar{Detect rivers}
+%
+%    \begin{macrocode}
+\ifimpnattyporivers
+ \ifimpnattypodraft
+   \ifluatex
+      \RequirePackage{luatexbase,luacode}
+      \begin{luacode}
+river_analyze_line = function(line,dim1,dim2)
+   local head = line.head
+
+   while head do
+      if head.id == 10 then  -- glue node
+         local w1,h1,d1 = node.dimensions(line.glue_set,line.glue_sign,line.glue_order,line.head,head.prev)
+         local w2,h2,d2 = node.dimensions(line.glue_set,line.glue_sign,line.glue_order,line.head,head)
+         --print("dim1:"..dim1.."; dim2:"..dim2.."; w1:"..w1.."; w2:"..w2) 
+         if w1 > dim2 then  -- out of range
+            return false,head
+         elseif w1 < dim2 and w2 > dim1 then -- found
+            return true,head
+         end
+      end
+      head = head.next
+   end
+
+   return true
+end
+
+rivers = function (head)
+   local prev_prev_line
+   local prev_line
+   local cur_line = head
+   local cur_node
+   local char_count
+
+   local linecounter = 0
+
+   while head do
+      if head.id == 0 then -- new line
+         linecounter = linecounter + 1
+         prev_prev_line = prev_line
+         prev_line = cur_line
+         cur_line = head
+         if linecounter > 2 then
+            cur_node = cur_line.head
+            char_count = 0
+            
+            while cur_node do
+               if cur_node.id == 37 then  -- glyph
+                  char_count = char_count + 1
+               elseif cur_node.id == 10 and char_count > 0 and cur_node.next then  -- glue node
+                  local w1,h1,d1 = node.dimensions(head.glue_set,head.glue_sign,head.glue_order,head.head,cur_node.prev)
+                  local w2,h2,d2 = node.dimensions(head.glue_set,head.glue_sign,head.glue_order,head.head,cur_node)
+                  found_pp,head_pp = river_analyze_line(prev_prev_line,w1,w2)
+                  found_p,head_p = river_analyze_line(prev_line,w1,w2)
+
+                  if found_pp and found_p then
+                     local n_pp = node.new("whatsit","pdf_literal")
+                     n_pp.data = "q \usecolor{\impnattyporiverscolor} 0 0 m 0 5 l 5 5 l 5 0 l b Q"
+                     node.insert_after(prev_prev_line,head_pp.prev,n_pp)
+
+                     local n_p = node.new("whatsit","pdf_literal")
+                     n_p.data = "q \usecolor{\impnattyporiverscolor} 0 0 m 0 5 l 5 5 l 5 0 l b Q"
+                     node.insert_after(prev_line,head_p.prev,n_p)
+
+                     local n_c = node.new("whatsit","pdf_literal")
+                     n_c.data = "q \usecolor{\impnattyporiverscolor} 0 0 m 0 5 l 5 5 l 5 0 l b Q"
+                     node.insert_after(cur_line,cur_node.prev,n_c)
+                  end
+               end
+               cur_node = cur_node.next
+            end
+         end
+      end
+      head = head.next
+   end
+
+   return true
+
+end
+
+
+luatexbase.add_to_callback("post_linebreak_filter",rivers,"rivers")
       \end{luacode}
    \else
       \PackageError{The homeoarchy option only works with LuaTeX}

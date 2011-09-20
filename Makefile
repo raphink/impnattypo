@@ -1,7 +1,7 @@
 CTANUPLOAD=ctanupload
 
 CONTRIBUTION  = impnattypo
-VERSION       = v0.9
+VERSION       = v1.0
 SUMMARY       = Recommendations typographiques de l'Imprimerie Nationale Française
 NAME          = Raphaël Pinson
 EMAIL         = raphink@gmail.com
@@ -34,6 +34,8 @@ $(FILE): README $(SOURCEFILES) $(DOCFILES) $(PKGFILES)
 
 $(CONTRIBUTION).pdf: $(CONTRIBUTION).sty
 	lualatex -interaction=batchmode $(CONTRIBUTION).dtx
+	makeindex -s gind.ist $(CONTRIBUTION).idx
+	makeindex -s gglo.ist -o $(CONTRIBUTION).gls $(CONTRIBUTION).glo
 	lualatex -interaction=batchmode $(CONTRIBUTION).dtx
 
 upload: ctanify

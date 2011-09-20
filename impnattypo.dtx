@@ -26,7 +26,7 @@
 %<package>\NeedsTeXFormat{LaTeX2e}[1999/12/01]
 %<package>\ProvidesPackage{impnattypo}
 %<*package>
-    [2011/09/20 0.9 Recommendations typographiques de l'Imprimerie Nationale Française]
+    [2011/09/20 1.0 Recommendations typographiques de l'Imprimerie Nationale Française]
 %</package>
 %
 %<*driver>
@@ -68,6 +68,7 @@
 %   Right brace   \}     Tilde         \~}
 %
 %
+% \changes{1.0}{2011/09/20}{Improve documentation, simplify internal variables}
 % \changes{0.9}{2011/09/20}{River detection returns false by default}
 % \changes{0.8}{2011/09/20}{Add river detection}
 % \changes{0.7}{2011/09/20}{Add homoioteleuton detection}
@@ -164,7 +165,7 @@
 %
 % Lorsque l'option \texttt{draft} est activée et que \LuaTeX est utilisé,
 % les espaces insécables insérés sont colorés en
-% {\color{\impnattypolastparlinecolor}\impnattypolastparlinecolor}.
+% {\color{\intlastparlinecolor}\intlastparlinecolor}.
 % La couleur utilisée peut être ajustée par l'option \texttt{lastparlinecolor}.
 %
 % \DescribeMacro{nosingleletter}
@@ -182,7 +183,7 @@
 %
 % Lorsque l'option \texttt{draft} est activée,
 % les espaces insécables insérés sont colorés en
-% {\color{\impnattyponosinglelettercolor}\impnattyponosinglelettercolor}.
+% {\color{\intnosinglelettercolor}\intnosinglelettercolor}.
 % La couleur utilisée peut être ajustée par l'option \texttt{nosinglelettercolor}.
 %
 % \DescribeMacro{homeoarchy}
@@ -208,18 +209,18 @@
 %
 % \begin{itemize}
 % \item Les mots entiers sont colorés en 
-% {\color{\impnattypohomeoarchywordcolor}\impnattypohomeoarchywordcolor}
+% {\color{\inthomeoarchywordcolor}\inthomeoarchywordcolor}
 % et cette couleur peut être ajustée par l'option \texttt{homeoarchywordcolor};
 % \item Les mots partiels sont colorés en
-% {\color{\impnattypohomeoarchycharcolor}\impnattypohomeoarchycharcolor}
+% {\color{\inthomeoarchycharcolor}\inthomeoarchycharcolor}
 % et cette couleur peut être ajustée par l'option \texttt{homeoarchycharcolor};
 % \end{itemize}
 %
 % Une séquence de glyphes est considéré comme problématique si:
 %
 % \begin{itemize}
-%   \item Le nombre de mots entiers matchant est supérieur à \impnattypohomeoarchymaxwords. Ce paramètre peut être ajusté par l'option \texttt{homeoarchymaxwords};
-%   \item Le nombre de caractères matchant est supérieur à \impnattypohomeoarchymaxchars. Ce paramètre peut être ajusté par l'option \texttt{homeoarchymaxchars};
+%   \item Le nombre de mots entiers matchant est supérieur à \inthomeoarchymaxwords. Ce paramètre peut être ajusté par l'option \texttt{homeoarchymaxwords};
+%   \item Le nombre de caractères matchant est supérieur à \inthomeoarchymaxchars. Ce paramètre peut être ajusté par l'option \texttt{homeoarchymaxchars};
 % \end{itemize}
 %
 %
@@ -235,7 +236,7 @@
 % Cette option n'est effective que si l'option \texttt{draft} est activée.
 %
 % Les espaces insécables insérées sont colorées en
-% {\color{\impnattyporiverscolor}\impnattyporiverscolor}.
+% {\color{\intriverscolor}\intriverscolor}.
 % Cette couleur peut être ajustée par l'option \texttt{riverscolor}.
 %
 % \subsection{Numérotation des chapitres}
@@ -311,7 +312,7 @@
 \RequirePackage{kvoptions}
 \SetupKeyvalOptions{
    family=impnattypo,
-   prefix=impnattypo,
+   prefix=int,
 }
 \DeclareBoolOption{draft}
 \DeclareBoolOption{frenchchapters}
@@ -336,7 +337,7 @@
 % \marginpar{No page finishes with an hyphenated word}
 %
 %    \begin{macrocode}
-\ifimpnattypohyphenation
+\ifinthyphenation
    \brokenpenalty=10000
 %    \end{macrocode}
 % \marginpar{Discourage hyphenation on two lines in a row}
@@ -348,7 +349,7 @@
 % \marginpar{Number chapters}
 %
 %    \begin{macrocode}
-\ifimpnattypofrenchchapters
+\ifintfrenchchapters
    \let\frenchchapter\Roman
    \renewcommand{\thechapter}{%                                                    
      \ifnum\value{chapter}=1
@@ -363,7 +364,7 @@
 % \marginpar{No single letter}
 %
 %    \begin{macrocode}
-\ifimpnattyponosingleletter
+\ifintnosingleletter
    \ifluatex
       \RequirePackage{luatexbase,luacode}
       \begin{luacode}
@@ -377,9 +378,9 @@
                  local p = node.new("penalty")
                  p.penalty = 10000
    
-                 \ifimpnattypodraft
+                 \ifintdraft
                     local w = node.new("whatsit","pdf_literal")
-                    w.data = "q \usecolor{\impnattyponosinglelettercolor} 0 0 m 0 5 l 2 5 l 2 0 l b Q"
+                    w.data = "q \usecolor{\intnosinglelettercolor} 0 0 m 0 5 l 2 5 l 2 0 l b Q"
       
                     node.insert_after(head,head,w)
                     node.insert_after(head,w,p)
@@ -405,7 +406,7 @@
 % \marginpar{Paragraph indentation}
 %
 %    \begin{macrocode}
-\ifimpnattypoparindent
+\ifintparindent
 \setlength{\parindent}{1em}
 \fi
 %    \end{macrocode}
@@ -413,7 +414,7 @@
 % \marginpar{Last line of paragraph}
 %
 %    \begin{macrocode}
-\ifimpnattypolastparline
+\ifintlastparline
    \ifluatex
       \RequirePackage{luatexbase,luacode}
       \begin{luacode}
@@ -426,9 +427,9 @@
               local p = node.new("penalty")
               p.penalty = 10000
 
-              \ifimpnattypodraft
+              \ifintdraft
                  local w = node.new("whatsit","pdf_literal")
-                 w.data = "q \usecolor{\impnattypolastparlinecolor} 0 0 m 0 5 l 2 5 l 2 0 l b Q"
+                 w.data = "q \usecolor{\intlastparlinecolor} 0 0 m 0 5 l 2 5 l 2 0 l b Q"
    
                  node.insert_after(head,head.prev,w)
                  node.insert_after(head,w,p)
@@ -453,8 +454,8 @@
 % \marginpar{Detect homeoarchies}
 %
 %    \begin{macrocode}
-\ifimpnattypohomeoarchy
- \ifimpnattypodraft
+\ifinthomeoarchy
+ \ifintdraft
    \ifluatex
       \RequirePackage{luatexbase,luacode}
       \begin{luacode}
@@ -575,8 +576,8 @@
         local cur_line = head
         local prev_line -- initiate prev_line
      
-        local max_char = tonumber(\impnattypohomeoarchymaxchars)
-        local max_word = tonumber(\impnattypohomeoarchymaxwords)
+        local max_char = tonumber(\inthomeoarchymaxchars)
+        local max_word = tonumber(\inthomeoarchymaxwords)
      
         while head do
           if head.id == 0 then -- new line
@@ -588,9 +589,9 @@
                if char_count >= max_char or word_count >= max_word then
                   local color
                   if word_count >= max_word then
-                     color = "q \usecolor{\impnattypohomeoarchywordcolor}"
+                     color = "q \usecolor{\inthomeoarchywordcolor}"
                   else
-                     color = "q \usecolor{\impnattypohomeoarchycharcolor}"
+                     color = "q \usecolor{\inthomeoarchycharcolor}"
                   end
 
                   -- highlight both lines
@@ -610,8 +611,8 @@
         local cur_line = head
         local prev_line -- initiate prev_line
      
-        local max_char = tonumber(\impnattypohomeoarchymaxchars)
-        local max_word = tonumber(\impnattypohomeoarchymaxwords)
+        local max_char = tonumber(\inthomeoarchymaxchars)
+        local max_word = tonumber(\inthomeoarchymaxwords)
 
         local linecounter = 0
      
@@ -627,9 +628,9 @@
                   if char_count >= max_char or word_count >= max_word then
                      local color
                      if word_count >= max_word then
-                        color = "q \usecolor{\impnattypohomeoarchywordcolor}"
+                        color = "q \usecolor{\inthomeoarchywordcolor}"
                      else
-                        color = "q \usecolor{\impnattypohomeoarchycharcolor}"
+                        color = "q \usecolor{\inthomeoarchycharcolor}"
                      end
    
                      -- highlight both lines
@@ -657,8 +658,8 @@
 % \marginpar{Detect rivers}
 %
 %    \begin{macrocode}
-\ifimpnattyporivers
- \ifimpnattypodraft
+\ifintrivers
+ \ifintdraft
    \ifluatex
       \RequirePackage{luatexbase,luacode}
       \begin{luacode}
@@ -712,15 +713,15 @@ rivers = function (head)
 
                   if found_pp and found_p then
                      local n_pp = node.new("whatsit","pdf_literal")
-                     n_pp.data = "q \usecolor{\impnattyporiverscolor} 0 0 m 0 5 l 5 5 l 5 0 l b Q"
+                     n_pp.data = "q \usecolor{\intriverscolor} 0 0 m 0 5 l 5 5 l 5 0 l b Q"
                      node.insert_after(prev_prev_line,head_pp.prev,n_pp)
 
                      local n_p = node.new("whatsit","pdf_literal")
-                     n_p.data = "q \usecolor{\impnattyporiverscolor} 0 0 m 0 5 l 5 5 l 5 0 l b Q"
+                     n_p.data = "q \usecolor{\intriverscolor} 0 0 m 0 5 l 5 5 l 5 0 l b Q"
                      node.insert_after(prev_line,head_p.prev,n_p)
 
                      local n_c = node.new("whatsit","pdf_literal")
-                     n_c.data = "q \usecolor{\impnattyporiverscolor} 0 0 m 0 5 l 5 5 l 5 0 l b Q"
+                     n_c.data = "q \usecolor{\intriverscolor} 0 0 m 0 5 l 5 5 l 5 0 l b Q"
                      node.insert_after(cur_line,cur_node.prev,n_c)
                   end
                end

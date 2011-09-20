@@ -30,8 +30,16 @@
 %</package>
 %
 %<*driver>
+\expandafter\ifx\csname ifenglish\endcsname\relax
+    \expandafter\newif\csname ifenglish\endcsname
+    \englishtrue
+\fi
 \documentclass{ltxdoc}
+\ifenglish
+\usepackage[english]{babel}
+\else
 \usepackage[french]{babel}
+\fi
 \usepackage{fontspec}
 \usepackage[svgnames]{xcolor}
 \setmainfont{Linux Libertine O}
@@ -83,14 +91,41 @@
 %
 % \providecommand*{\url}{\texttt}
 % \GetFileInfo{impnattypo.dtx}
+% \ifenglish
+% \title{The \textsf{impnattypo} package}
+% \else
 % \title{Le paquet \textsf{impnattypo}}
+% \fi
 % \author{Raphaël Pinson \\ \url{raphink@gmail.com}}
+% \ifenglish
+% \date{\fileversion~from \filedate}
+% \else
 % \date{\fileversion~en date du \filedate}
+% \fi
 %
 % \maketitle
 %
 % \section{Introduction}
 %
+% \ifenglish
+% When it comes to French typography,
+% the \emph{Lexique des règles typographiques en usage à l'Imprimerie Nationale}
+% is a definite reference.
+%
+% While the majority of the recommendations of this book has been implemented
+% in the \textsf{frenchb} module for \textsf{babel},
+% other recommendations still deserve to be automatized in order to be
+% implemented in \LaTeX.
+%
+% Such is the original goal of this package, initiated by a question on the
+% tex.stackexchange.com\footnote{\url{http://tex.stackexchange.com/questions/20493/french-typography-recommendations}} website,
+% and which implements several of the rules listed in this booklet 
+% so as to make them more easily applicable to texts edited with \LaTeX.
+%
+% As this package grew, functionalities were added, including some
+% that were not directly related to the booklet, but improved
+% the typographic quality of documents.
+% \else
 % En matière de typographie française,
 % le \emph{Lexique des règles typographiques en usage à l'Imprimerie Nationale}
 % est une référence incontournable.
@@ -100,52 +135,106 @@
 % certaines autres recommendations méritent encore d'être automatisées pour être
 % implémentées en \LaTeX.
 %
-% C'est le but de ce paquet, initié par une question sur le site
+% C'est le but original de ce paquet, initié par une question sur le site
 % tex.stackexchange.com\footnote{\url{http://tex.stackexchange.com/questions/20493/french-typography-recommendations}},
-% et qui implémente plusieurs règles
-% édictées dans ce lexique afin de les rendre plus facilement applicables
-% aux textes édités avec \LaTeX.
+% et qui implémente plusieurs règles édictées dans ce lexique
+% afin de les rendre plus facilement applicables aux textes édités avec \LaTeX.
 %
+% Au fur et à mesure que ce paquet a grandi, des fonctionalités sont venues
+% s'ajouter, dont certaines ne sont pas directement liées au lexique,
+% mais améliorent la qualité typographique des documents.
+% \fi
+%
+% \ifenglish
+% \section{Usage}
+% \else
 % \section{Utilisation}
+% \fi
 %
+% \ifenglish
+% In order to use the \texttt{impnattypo} package, use the following line:
+% \else
 % Pour utiliser le paquet \texttt{impnattypo}, entrez la ligne:
+% \fi
 %
 % \begin{verbatim}
 %    \usepackage[<options>]{impnattypo}
 % \end{verbatim}
 %
+% \ifenglish
+% The package options are described in the following sections.
+% \else
 % Les options du paquet sont décrites dans les sections suivantes.
+% \fi
 %
+% \ifenglish
+% \subsection{Hyphenation}
+%
+% \DescribeMacro{hyphenation}
+% Besides the general hyphenation rules, the booklet indicates
+% that we should ``prevent hyphenation of words on more
+% than two consecutive lines.''
+%
+% In order to simplify the code, the suggested implementation
+% strongly discourages hyphenation at the end of pages, as well
+% as hyphenation on two consecutive lines.
+%
+% To active this functionality, use the \texttt{hyphenation} option:
+% \else
 % \subsection{Césures}
 %
 % \DescribeMacro{hyphenation}
 % En dehors des règles générales de coupure des mots, le lexique indique
 % qu'il faut \og [éviter] les coupures de mots sur plus de trois lignes
-% consécutives \fg{}.
+% consécutives. \fg{}
 %
-% En faisant un peu de zèle, l'implémentation proposée décourage fortement
+% Afin de simplifier le code, l'implémentation proposée décourage fortement
 % les césures en fin de page, ainsi que les césures sur deux lignes
 % consécutives.
 %
 % Pour activer cette fonctionalité, utilisez l'option \texttt{hyphenation}:
+% \fi
 %
 % \begin{verbatim}
 %    \usepackage[hyphenation]{impnattypo}
 % \end{verbatim}
 %
 %
+% \ifenglish
+% \subsection{Paragraph formatting}
+%
+% \DescribeMacro{parindent}
+% The booklet advises to indent paragraphs by 1em.
+% This |\parindent| setting can be achieved by using
+% the \texttt{parindent} option:
+% \else
 % \subsection{Formatage des paragraphes}
 %
 % \DescribeMacro{parindent}
 % Le lexique conseille une indentation des paragraphes de 1em.
 % Ce réglage de |\parindent| peut être obtenu par l'utilisation
 % de l'option \texttt{parindent}:
+% \fi
 %
 % \begin{verbatim}
 %    \usepackage[parindent]{impnattypo}
 % \end{verbatim}
 %
 % \DescribeMacro{lastparline}
+% \ifenglish
+% Moreover, it is indicated in the ``Hyphenation'' section
+% that ``the last line of a paragraph must contain a word of
+% the end of a word of a width at least equal to the double
+% of the identation of the next paragraph.'' Since implementing
+% this solution exactly is quite tricky, the \texttt{lastparline}
+% option ensures that the last line of a paragraph is at least
+% as long as the double value of |\parindent|.\footnote{\url{http://tex.stackexchange.com/questions/28357/ensure-minimal-length-of-last-line}}
+%
+% When \LuaTeX is used, the solution provided by Patrick Gundlach\footnote{\url{http://tex.stackexchange.com/questions/28357/ensure-minimal-length-of-last-line/28361\#28361}}
+% is used. With other rendering engines, it is the native solution provided by
+% Enrico Gregorio\footnote{\url{http://tex.stackexchange.com/questions/28357/ensure-minimal-length-of-last-line/28358\#28358}}
+% that serves as an implementation:
+% \else
 % De plus, il est indiqué dans la section \og Coupure des mots \fg{}
 % que \og la dernière ligne d'un alinéa doit comporter un mot ou
 % une fin de mot de longueur au moins égale au double du renfoncement
@@ -158,26 +247,50 @@
 % est utilisée. Avec les autres moteurs de rendu, c'est la solution native de
 % Enrico Gregorio\footnote{\url{http://tex.stackexchange.com/questions/28357/ensure-minimal-length-of-last-line/28358\#28358}}
 % qui fait office d'implémentation:
+% \fi
 %
 % \begin{verbatim}
 %    \usepackage[lastparline]{impnattypo}
 % \end{verbatim}
 %
+% \ifenglish
+% When the \texttt{draft} option is activated and \LuaTeX is used,
+% the inserted ties are colored in
+% {\color{\intlastparlinecolor}\intlastparlinecolor}.
+% The color can be tuned with the \texttt{lastparlinecolor} option.
+% \else
 % Lorsque l'option \texttt{draft} est activée et que \LuaTeX est utilisé,
 % les espaces insécables insérés sont colorés en
 % {\color{\intlastparlinecolor}\intlastparlinecolor}.
 % La couleur utilisée peut être ajustée par l'option \texttt{lastparlinecolor}.
+% \fi
 %
 % \DescribeMacro{nosingleletter}
+% \ifenglish
+% It is also recommended to avoid hyphenation points that would isolate a single letter.
+% The solution proposed by Patrick Gundlach\footnote{\url{http://tex.stackexchange.com/questions/27780/one-letter-word-at-the-end-of-line}}
+% allows to fix this by using \LuaTeX. To activate this functionality,
+% you can use the \texttt{nosingleletter} option:
+% \else
 % Il est également recommendé d'éviter les coupures isolant une lettre.
 % La solution proposée par Patrick Gundlach\footnote{\url{http://tex.stackexchange.com/questions/27780/one-letter-word-at-the-end-of-line}}
 % permet de remédier à cela en utilisant \LuaTeX. Pour activer cette
 % fonctionalité, il faut utiliser l'option \texttt{nosingleletter}:
+% \fi
 %
 % \begin{verbatim}
 %    \usepackage[nosingleletter]{impnattypo}
 % \end{verbatim}
 %
+% \ifenglish
+% When this option is activated, only \LuaTeX{} (with the |lualatex| command)
+% can render the document.
+% 
+% When the \texttt{draft} option is activated,
+% the inserted ties are colored in
+% {\color{\intnosinglelettercolor}\intnosinglelettercolor}.
+% The color can be tuned by setting the \texttt{nosinglelettercolor} option.
+% \else
 % Lorsque cette option est activée, seul \LuaTeX{} (via la commande |lualatex|)
 % pourra effectuer le rendu du document.
 %
@@ -185,8 +298,20 @@
 % les espaces insécables insérés sont colorés en
 % {\color{\intnosinglelettercolor}\intnosinglelettercolor}.
 % La couleur utilisée peut être ajustée par l'option \texttt{nosinglelettercolor}.
+% \fi
 %
 % \DescribeMacro{homeoarchy}
+% \ifenglish
+% When two consecutive lines begin (homeoarchy) or end (homoioteleuton)
+% with the same word or series of letters,
+% it can confuse the reader, so this has to be avoided.
+%
+% Fixing this problem automatically is very complex
+% and generally not a good idea.\footnote{\url{http://tex.stackexchange.com/questions/27588/repetition-of-a-word-on-two-lines}}
+% For this reason, the \texttt{homeoarchy} option in this package
+% only detects and highlights them. Fixing them will usually
+% be a matter of introducing ties in the paragraph:
+% \else
 % Lorsque deux lignes consécutives commencent ou finissent
 % par le même mot ou la même série de lettres,
 % cela peut induire le lecteur en erreur et cela est donc à éviter.
@@ -197,11 +322,40 @@
 % \texttt{homeoarchy} de ce paquet se contente
 % de les détecter et de les afficher. Leur correction
 % consistera en général en l'introduction d'une
-% espace insécable dans le paragraphe.
+% espace insécable dans le paragraphe:
+% \fi
 %
 % \begin{verbatim}
 %    \usepackage[homeoarchy]{impnattypo}
 % \end{verbatim}
+%
+% \ifenglish
+% When this option is activated, only \LuaTeX{} (with the |lualatex| command)
+% can render the document.
+% 
+% This option is only effective if the \texttt{draft} option is activated.
+% 
+% The inserted ties are colored with two colors:
+% \begin{itemize}
+% \item Entire words are colored in
+% {\color{\inthomeoarchywordcolor}\inthomeoarchywordcolor}
+% and this color can be set with the \texttt{homeoarchywordcolor} option;
+% \item Partial words are colored in
+% {\color{\inthomeoarchycharcolor}\inthomeoarchycharcolor}
+% and this color can be set by means of the \texttt{homeoarchycharcolor} option;
+% \end{itemize}
+%
+% A glyph sequence is considered problematic when:
+%
+% \begin{itemize}
+%   \item The number of entire matching words is greater than \inthomeoarchymaxwords.
+%         This parameter can be tuned with the \texttt{homeoarchymaxwords} option;
+%   \item The number of matching characters is greaterr than \inthomeoarchymaxchars.
+%         This parameter can be tuned with the \texttt{homeoarchymaxchars} option;
+% \end{itemize}
+% \else
+% Lorsque cette option est activée, seul \LuaTeX{} (via la commande |lualatex|)
+% pourra effectuer le rendu du document.
 %
 % Cette option n'est effective que si l'option \texttt{draft} est activée.
 %
@@ -216,32 +370,68 @@
 % et cette couleur peut être ajustée par l'option \texttt{homeoarchycharcolor};
 % \end{itemize}
 %
-% Une séquence de glyphes est considéré comme problématique si:
+% Une séquence de glyphes est considérée comme problématique si:
 %
 % \begin{itemize}
-%   \item Le nombre de mots entiers matchant est supérieur à \inthomeoarchymaxwords. Ce paramètre peut être ajusté par l'option \texttt{homeoarchymaxwords};
-%   \item Le nombre de caractères matchant est supérieur à \inthomeoarchymaxchars. Ce paramètre peut être ajusté par l'option \texttt{homeoarchymaxchars};
+%   \item Le nombre de mots entiers matchant est supérieur à \inthomeoarchymaxwords.
+%         Ce paramètre peut être ajusté par l'option \texttt{homeoarchymaxwords};
+%   \item Le nombre de caractères matchant est supérieur à \inthomeoarchymaxchars.
+%         Ce paramètre peut être ajusté par l'option \texttt{homeoarchymaxchars};
 % \end{itemize}
+% \fi
 %
 %
 % \DescribeMacro{rivers}
+% \ifenglish
+% A river is a vertical alignment of spaces in a paragraph.
+% The \texttt{rivers} option allows to color rivers so as to 
+% identify them. This option does not fix the detected rivers:
+% \else
 % Une lézarde est un alignement vertical d'espaces dans un paragraphe.
 % L'option \texttt{rivers} permet de colorer les lézardes afin de les
 % identifier. Cette option ne corrige pas les lézardes détectées:
+% \fi
 %
 % \begin{verbatim}
 %    \usepackage[rivers]{impnattypo}
 % \end{verbatim}
+%
+% \ifenglish
+% When this option is activated, only \LuaTeX{} (with the |lualatex| command)
+% can render the document.
+% 
+% This option is only effective if the \texttt{draft} option is activated.
+% 
+% The inserted ties are colored in
+% {\color{\intriverscolor}\intriverscolor}.
+% This color can be tuned by means of the \texttt{riverscolor} option.
+% \else 
+% Lorsque cette option est activée, seul \LuaTeX{} (via la commande |lualatex|)
+% pourra effectuer le rendu du document.
 %
 % Cette option n'est effective que si l'option \texttt{draft} est activée.
 %
 % Les espaces insécables insérées sont colorées en
 % {\color{\intriverscolor}\intriverscolor}.
 % Cette couleur peut être ajustée par l'option \texttt{riverscolor}.
+% \fi
 %
+% \ifenglish
+% \subsection{Chapter numbering}
+% \else
 % \subsection{Numérotation des chapitres}
+% \fi
 %
 % \DescribeMacro{frenchchapters}
+% \ifenglish
+% When it comes to chapter numbering, the booklet indicates:
+% ``In a title, chapter numbers are typeset in roman capital numbers,
+% except for the ordinal `premier' written in letters in spite
+% of the current fashion to write it in the cardinal form Chapter I.''
+%
+% The \texttt{frenchchapters} option of the package implements
+% this recommendation:
+% \else
 % Concernant la numérotation des chapitres, le lexique indique:
 % \og Dans un titre, on compose en chiffres romains grandes capitales
 % les numéros de chapitres, à l'exception de l'ordinal \og premier \fg{}
@@ -249,12 +439,23 @@
 % la forme cardinale Chapitre I. \fg{}
 %
 % L'option \texttt{frenchchapters} du paquet implémente cette recommendation:
+% \fi
 %
 % \begin{verbatim}
 %    \usepackage[frenchchapters]{impnattypo}
 % \end{verbatim}
 %
-% Si vous souhaitez bénéficier du la forme ordinale \og premier \fg{}
+% \ifenglish
+% Should you wish to use the ordinal form `premier'
+% without using roman numbers for chapter numbering,
+% you can redefine the \texttt{frenchchapter} macro, for example:
+%
+% \begin{verbatim}
+%    \let\frenchchapter\arabic % use arabic numbers
+%    \let\frenchchapter\babylonian % use babylonian numbers
+% \end{verbatim}
+% \else
+% Si vous souhaitez bénéficier de la forme ordinale \og premier \fg{}
 % sans pour autant utiliser une numérotation des chapitres en chiffres romains,
 % il est possible de redéfinir la macro \texttt{frenchchapter}, par exemple:
 %
@@ -262,45 +463,78 @@
 %    \let\frenchchapter\arabic % numérotation en chiffres arabes
 %    \let\frenchchapter\babylonian % numérotation en chiffres babyloniens
 % \end{verbatim}
+% \fi
 % 
 %
-% \subsection{Lignes orphelines}
+% \ifenglish
+% \subsection{Widows and Orphans}
+% 
+% It is recommended to not leave widows and orphans in a document.
+% For this reason, we recommend you use the |nowidow| package:
+% \else
+% \subsection{Lignes orphelines et veuves}
 %
 % Il est fortement recommendé de ne pas laisser de lignes orphelines
 % dans un document. Pour cela, nous vous conseillons d'utiliser le paquet
 % |nowidow|:
+% \fi
 %
 % \begin{verbatim}
 %    \usepackage[all]{nowidow}
 % \end{verbatim}
 %
+% \ifenglish
+% See the package documentation for more options.
+% \else
 % Voir la documentation de ce paquet pour plus d'options.
+% \fi
 %
 %
+% \ifenglish
+% \subsection{Draft mode}
+% The \textsf{impnattypo} package features a draft mode
+% allowing to visualize the penalties (ties) inserted by the
+% \texttt{nosingleletter} and \texttt{lastparline} options,
+% as well as the information added by the \texttt{homeoarchy}
+% and \texttt{rivers} options. In draft mode,
+% places where ties were inserted are indicated
+% by colored squared.
+%
+% To activate the draft mode, use the \texttt{draft} option,
+% for example:
+% \else
 % \subsection{Mode brouillon}
 %
 % \DescribeMacro{draft}
 % Le paquet \textsf{impnattypo} dispose d'un mode brouillon
 % permettant de visualiser les pénalités (espaces insécables)
 % ajoutés par les options \texttt{nosingleletter} et 
-% \texttt{lastparline}. En mode brouillon,
+% \texttt{lastparline}, ainsi que les informations
+% ajoutées par les options \texttt{homeoarchy}
+% et \texttt{rivers}. En mode brouillon,
 % les emplacements des espaces insécables insérés
 % sont marqués par des rectangles de couleur.
 %
 % Pour activer le mode brouillon, utilisez l'option \texttt{draft},
 % par exemple:
+% \fi
 %
 % \begin{verbatim}
 %    \usepackage[draft,lastparline]{impnattypo}
 % \end{verbatim}
 %
+% \ifenglish
+% This document is generated with the \texttt{draft} option on
+% in order to demonstrate its effects.
+% \else
 % Cette document est générée avec l'option \texttt{draft} afin d'en
 % montrer les effets.
+% \fi
 %
 %
 % \StopEventually{}
 %
-% \section{Implémentation}
+% \section{Implementation}
 %
 % \iffalse
 %<*package>
@@ -748,6 +982,12 @@ luatexbase.add_to_callback("post_linebreak_filter",rivers,"rivers")
 %
 % \iffalse
 %</package>
+%<*fr>
+%% Set language to French
+\expandafter\newif\csname ifenglish\endcsname
+\englishfalse
+\input{impnattypo.dtx}
+%</fr>
 % \fi
 %
 % \Finale

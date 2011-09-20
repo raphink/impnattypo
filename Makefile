@@ -11,9 +11,9 @@ LICENSE       = free
 FREEVERSION   = lppl
 FILE          = $(CONTRIBUTION).tar.gz
 
-SOURCEFILES   = $(CONTRIBUTION).dtx $(CONTRIBUTION).ins
+SOURCEFILES   = $(CONTRIBUTION).dtx $(CONTRIBUTION).ins $(CONTRIBUTION)-fr.tex
 PKGFILES      = $(CONTRIBUTION).sty
-DOCFILES      = $(CONTRIBUTION).pdf
+DOCFILES      = $(CONTRIBUTION).pdf $(CONTRIBUTION)-fr.pdf
 
 TEXINSTALLDIR = /usr/local/texlive/texmf-local
 
@@ -37,6 +37,12 @@ $(CONTRIBUTION).pdf: $(CONTRIBUTION).sty
 	makeindex -s gind.ist $(CONTRIBUTION).idx
 	makeindex -s gglo.ist -o $(CONTRIBUTION).gls $(CONTRIBUTION).glo
 	lualatex -interaction=batchmode $(CONTRIBUTION).dtx
+
+$(CONTRIBUTION)-fr.pdf: $(CONTRIBUTION).sty $(CONTRIBUTION)-fr.tex
+	lualatex -interaction=batchmode $(CONTRIBUTION)-fr.tex
+	makeindex -s gind.ist $(CONTRIBUTION)-fr.idx
+	makeindex -s gglo.ist -o $(CONTRIBUTION)-fr.gls $(CONTRIBUTION)-fr.glo
+	lualatex -interaction=batchmode $(CONTRIBUTION)-fr.tex
 
 upload: ctanify
 	$(CTANUPLOAD) -p

@@ -1,7 +1,7 @@
 CTANUPLOAD=ctanupload
 
 CONTRIBUTION  = impnattypo
-VERSION       = v0.6
+VERSION       = v0.7
 SUMMARY       = Recommendations typographiques de l'Imprimerie Nationale Française
 NAME          = Raphaël Pinson
 EMAIL         = raphink@gmail.com

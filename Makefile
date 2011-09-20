@@ -2,7 +2,7 @@ CTANUPLOAD=ctanupload
 
 CONTRIBUTION  = impnattypo
 VERSION       = v1.0
-SUMMARY       = Recommendations typographiques de l'Imprimerie Nationale Française
+SUMMARY       = Typographic utilities inspired by the French Imprimerie Nationale
 NAME          = Raphaël Pinson
 EMAIL         = raphink@gmail.com
 DIRECTORY     = /macros/latex/contrib/$(CONTRIBUTION)

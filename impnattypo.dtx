@@ -353,9 +353,9 @@
       
       local prevent_single_letter = function (head)
         while head do
-          if head.id == 37 then                                                                          -- glyph
-            if (head.char >= 65 and head.char <= 122) or (head.char >= 192 and head.char <= 255) then    -- some kind of letter
-               if head.prev.id == 10 and head.next.id == 10 then                                         -- only if we are at a one letter word
+          if head.id == 37 then                                             -- glyph
+            if unicode.utf8.match(unicode.utf8.char(head.char),"%a") then   -- some kind of letter
+               if head.prev.id == 10 and head.next.id == 10 then            -- only if we are at a one letter word
    
                  local p = node.new("penalty")
                  p.penalty = 10000

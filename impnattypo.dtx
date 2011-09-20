@@ -221,6 +221,21 @@
 % \end{itemize}
 %
 %
+% \DescribeMacro{rivers}
+% Une lézarde est un alignement vertical d'espaces dans un paragraphe.
+% L'option \texttt{rivers} permet de colorer les lézardes afin de les
+% identifier. Cette option ne corrige pas les lézardes détectées:
+%
+% \begin{verbatim}
+%    \usepackage[rivers]{impnattypo}
+% \end{verbatim}
+%
+% Cette option n'est effective que si l'option \texttt{draft} est activée.
+%
+% Les espaces insécables insérées sont colorées en
+% {\color{\impnattyporiverscolor}\impnattyporiverscolor}.
+% Cette couleur peut être ajustée par l'option \texttt{riverscolor}.
+%
 % \subsection{Numérotation des chapitres}
 %
 % \DescribeMacro{frenchchapters}
@@ -308,7 +323,7 @@
 \DeclareStringOption[orange]{homeoarchycharcolor}
 \DeclareStringOption[brown]{nosinglelettercolor}
 \DeclareStringOption[teal]{lastparlinecolor}
-\DeclareStringOption[blue]{riverscolor}
+\DeclareStringOption[lime]{riverscolor}
 \DeclareStringOption[1]{homeoarchymaxwords}
 \DeclareStringOption[3]{homeoarchymaxchars}
 \ProcessKeyvalOptions*

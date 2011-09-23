@@ -897,7 +897,7 @@
    \ifluatex
       \RequirePackage{luatexbase,luacode}
       \begin{luacode}
-river_analyze_line = function(line,dim1,dim2)
+river_analyze_line = function(line,dim1,dim2,precision)
    local head = line.head
 
    while head do
@@ -905,9 +905,9 @@ river_analyze_line = function(line,dim1,dim2)
          local w1,h1,d1 = node.dimensions(line.glue_set,line.glue_sign,line.glue_order,line.head,head.prev)
          local w2,h2,d2 = node.dimensions(line.glue_set,line.glue_sign,line.glue_order,line.head,head)
          --print("dim1:"..dim1.."; dim2:"..dim2.."; w1:"..w1.."; w2:"..w2) 
-         if w1 > dim2 then  -- out of range
+         if w1 > dim2 + precision then  -- out of range
             return false,head
-         elseif w1 < dim2 and w2 > dim1 then -- found
+         elseif w1 < (dim2 + precision) and w2 > (dim1 - precision) then -- found
             return true,head
          end
       end
@@ -940,23 +940,34 @@ rivers = function (head)
                if cur_node.id == 37 then  -- glyph
                   char_count = char_count + 1
                elseif cur_node.id == 10 and char_count > 0 and cur_node.next then  -- glue node
+                  -- prev_line
                   local w1,h1,d1 = node.dimensions(head.glue_set,head.glue_sign,head.glue_order,head.head,cur_node.prev)
                   local w2,h2,d2 = node.dimensions(head.glue_set,head.glue_sign,head.glue_order,head.head,cur_node)
-                  found_pp,head_pp = river_analyze_line(prev_prev_line,w1,w2)
-                  found_p,head_p = river_analyze_line(prev_line,w1,w2)
+                  -- if we allow up to 45° diagonal rivers, then there can be up to + or - line height between spaces
+                  local w_p,h_p,d_p = node.dimensions(prev_line.head,cur_line.head) -- calculate line height
+                  found_p,head_p = river_analyze_line(prev_line,w1,w2,h_p)
 
-                  if found_pp and found_p then
-                     local n_pp = node.new("whatsit","pdf_literal")
-                     n_pp.data = "q \usecolor{\intriverscolor} 0 0 m 0 5 l 5 5 l 5 0 l b Q"
-                     node.insert_after(prev_prev_line,head_pp.prev,n_pp)
-
-                     local n_p = node.new("whatsit","pdf_literal")
-                     n_p.data = "q \usecolor{\intriverscolor} 0 0 m 0 5 l 5 5 l 5 0 l b Q"
-                     node.insert_after(prev_line,head_p.prev,n_p)
-
-                     local n_c = node.new("whatsit","pdf_literal")
-                     n_c.data = "q \usecolor{\intriverscolor} 0 0 m 0 5 l 5 5 l 5 0 l b Q"
-                     node.insert_after(cur_line,cur_node.prev,n_c)
+                  if found_p then
+                     -- prev_prev_line
+                     local w1,h1,d1 = node.dimensions(prev_line.glue_set,prev_line.glue_sign,prev_line.glue_order,prev_line.head,head_p.prev)
+                     local w2,h2,d2 = node.dimensions(prev_line.glue_set,prev_line.glue_sign,prev_line.glue_order,prev_line.head,head_p)
+                     -- if we allow up to 45° diagonal rivers, then there can be up to + or - line height between spaces
+                     local w_p,h_p,d_p = node.dimensions(prev_prev_line.head,prev_line.head) -- calculate line height
+                     found_pp,head_pp = river_analyze_line(prev_prev_line,w1,w2,h_p)
+   
+                     if found_pp then
+                        local n_pp = node.new("whatsit","pdf_literal")
+                        n_pp.data = "q \usecolor{\intriverscolor} 0 0 m 0 5 l 5 5 l 5 0 l b Q"
+                        node.insert_after(prev_prev_line,head_pp.prev,n_pp)
+   
+                        local n_p = node.new("whatsit","pdf_literal")
+                        n_p.data = "q \usecolor{\intriverscolor} 0 0 m 0 5 l 5 5 l 5 0 l b Q"
+                        node.insert_after(prev_line,head_p.prev,n_p)
+   
+                        local n_c = node.new("whatsit","pdf_literal")
+                        n_c.data = "q \usecolor{\intriverscolor} 0 0 m 0 5 l 5 5 l 5 0 l b Q"
+                        node.insert_after(cur_line,cur_node.prev,n_c)
+                     end
                   end
                end
                cur_node = cur_node.next

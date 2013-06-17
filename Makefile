@@ -25,7 +25,7 @@ ctanify: $(FILE)
 $(FILE): README $(SOURCEFILES) $(DOCFILES) $(PKGFILES)
 	ctanify --pkgname $(CONTRIBUTION) $^
 
-%.sty: %.dtx %.ins
+%.sty %-fr.tex: %.dtx %.ins
 	latex $*.ins
 
 %.pdf: %.tex

@@ -223,14 +223,14 @@
 % \DescribeMacro{lastparline}
 % \ifenglish
 % Moreover, it is indicated in the ``Hyphenation'' section
-% that ``the last line of a paragraph must contain a word of
+% that ``the last line of a paragraph must contain a word or
 % the end of a word of a width at least equal to the double
-% of the indentation of the next paragraph.'' Since implementing
+% of the indent of the next paragraph.'' Since implementing
 % this solution exactly is quite tricky, the \texttt{lastparline}
 % option ensures that the last line of a paragraph is at least
 % as long as the double value of |\parindent|.\footnote{\url{http://tex.stackexchange.com/questions/28357/ensure-minimal-length-of-last-line}}
 %
-% When \LuaTeX is used, the solution provided by Patrick Gundlach\footnote{\url{http://tex.stackexchange.com/questions/28357/ensure-minimal-length-of-last-line/28361\#28361}}
+% When \LuaTeX{} is used, the solution provided by Patrick Gundlach\footnote{\url{http://tex.stackexchange.com/questions/28357/ensure-minimal-length-of-last-line/28361\#28361}}
 % is used. With other rendering engines, it is the native solution provided by
 % Enrico Gregorio\footnote{\url{http://tex.stackexchange.com/questions/28357/ensure-minimal-length-of-last-line/28358\#28358}}
 % that serves as an implementation:
@@ -243,7 +243,7 @@
 % ligne d'un alinéa est au moins aussi longue que le double
 % de la valeur de |\parindent|.\footnote{\url{http://tex.stackexchange.com/questions/28357/ensure-minimal-length-of-last-line}}
 %
-% Lorsque \LuaTeX est utilisé, la solution de Patrick Gundlach\footnote{\url{http://tex.stackexchange.com/questions/28357/ensure-minimal-length-of-last-line/28361\#28361}}
+% Lorsque \LuaTeX{} est utilisé, la solution de Patrick Gundlach\footnote{\url{http://tex.stackexchange.com/questions/28357/ensure-minimal-length-of-last-line/28361\#28361}}
 % est utilisée. Avec les autres moteurs de rendu, c'est la solution native de
 % Enrico Gregorio\footnote{\url{http://tex.stackexchange.com/questions/28357/ensure-minimal-length-of-last-line/28358\#28358}}
 % qui fait office d'implémentation:
@@ -254,12 +254,12 @@
 % \end{verbatim}
 %
 % \ifenglish
-% When the \texttt{draft} option is activated and \LuaTeX is used,
+% When the \texttt{draft} option is activated and \LuaTeX{} is used,
 % the inserted ties are colored in
 % {\color{\intlastparlinecolor}\intlastparlinecolor}.
 % The color can be tuned with the \texttt{lastparlinecolor} option.
 % \else
-% Lorsque l'option \texttt{draft} est activée et que \LuaTeX est utilisé,
+% Lorsque l'option \texttt{draft} est activée et que \LuaTeX{} est utilisé,
 % les espaces insécables insérés sont colorés en
 % {\color{\intlastparlinecolor}\intlastparlinecolor}.
 % La couleur utilisée peut être ajustée par l'option \texttt{lastparlinecolor}.
@@ -469,7 +469,7 @@
 % \ifenglish
 % \subsection{Widows and Orphans}
 % 
-% It is recommended to not leave widows and orphans in a document.
+% It is recommended not to leave widows and orphans in a document.
 % For this reason, we recommend you use the |nowidow| package:
 % \else
 % \subsection{Lignes orphelines et veuves}
@@ -498,7 +498,7 @@
 % as well as the information added by the \texttt{homeoarchy}
 % and \texttt{rivers} options. In draft mode,
 % places where ties were inserted are indicated
-% by colored squared.
+% by colored squares.
 %
 % To activate the draft mode, use the \texttt{draft} option,
 % for example:

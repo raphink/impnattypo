@@ -61,3 +61,7 @@ clean:
 	rm -f $(DOCFILES) $(PKGFILES)
 	rm -f $(FILE)
 
+check:
+	test -e $(CONTRIBUTION)-test.pdf
+	rspec spec/pdf_spec.rb
+

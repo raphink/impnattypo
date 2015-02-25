@@ -2,7 +2,7 @@
 language: c
 install:
   - sudo apt-get update
-  - sudo apt-get install texlive-latex-extra poppler-utils
+  - sudo apt-get install texlive-latex-extra poppler-utils fonts-linuxlibertine
   - gem install bundler
   - bundle update
 script: make && make check

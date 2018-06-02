@@ -606,12 +606,15 @@
    \ifluatex
       \RequirePackage{luatexbase,luacode}
       \begin{luacode}
+      local glyph_id = node.id "glyph"
+      local glue_id  = node.id "glue"
+      local hlist_id = node.id "hlist"
       
       local prevent_single_letter = function (head)
         while head do
-          if head.id == 37 then                                             -- glyph
+          if head.id == glyph_id then                                             -- glyph
             if unicode.utf8.match(unicode.utf8.char(head.char),"%a") then   -- some kind of letter
-               if head.prev.id == 10 and head.next.id == 10 then            -- only if we are at a one letter word
+               if head.prev.id == glue_id and head.next.id == glue_id then            -- only if we are at a one letter word
    
                  local p = node.new("penalty")
                  p.penalty = 10000
@@ -659,7 +662,7 @@
       last_line_twice_parindent = function (head)
         while head do
           local _w,_h,_d = node.dimensions(head)
-          if head.id == 10 and head.subtype ~= 15 and (_w < 2 * tex.parindent) then
+          if head.id == glue_id and head.subtype ~= 15 and (_w < 2 * tex.parindent) then
       
               -- we are at a glue and have less then 2*\parindent to go
               local p = node.new("penalty")
@@ -705,30 +708,30 @@
         local word_count = 0
      
         while head1 and head2 do
-           if (head1.id == 37 and head2.id == 37
+           if (head1.id == glyph_id and head2.id == glyph_id
                   and head1.char == head2.char)          -- identical glyph
-              or (head1.id == 10 and head2.id == 10) then  -- glue
+              or (head1.id == glue_id and head2.id == glue_id) then  -- glue
         
-              if head1.id == 37 then -- glyph
+              if head1.id == glyph_id then -- glyph
                  char_count = char_count + 1
-              elseif char_count > 0 and head1.id == 10 then -- glue
+              elseif char_count > 0 and head1.id == glue_id then -- glue
                  word_count = word_count + 1
               end
               head1 = head1.next
               head2 = head2.next
            elseif (head1.id == 0 or head2.id == 0) then -- end of line
               break
-           elseif (head1.id ~= 37 and head1.id ~= 10) then -- some other kind of node
+           elseif (head1.id ~= glyph_id and head1.id ~= glue_id) then -- some other kind of node
               head1 = head1.next
-           elseif (head2.id ~= 37 and head2.id ~= 10) then -- some other kind of node
+           elseif (head2.id ~= glyph_id and head2.id ~= glue_id) then -- some other kind of node
               head2 = head2.next
            else -- no match, no special node
               break
            end
         end
         -- analyze last non-matching node, check for punctuation
-        if ((head1 and head1.id == 37 and head1.char > 49)
-             or (head2 and head2.id == 37 and head2.char > 49)) then
+        if ((head1 and head1.id == glyph_id and head1.char > 49)
+             or (head2 and head2.id == glyph_id and head2.char > 49)) then
            -- not a word
         elseif char_count > 0 then
            word_count = word_count + 1
@@ -744,34 +747,34 @@
         local word_count = 0
 
         while head1 and head2 do
-           if (head1.id == 37 and head2.id == 37
+           if (head1.id == glyph_id and head2.id == glyph_id
                   and head1.char == head2.char)          -- identical glyph
-              or (head1.id == 10 and head2.id == 10) then  -- glue
+              or (head1.id == glue_id and head2.id == glue_id) then  -- glue
         
-              if head1.id == 37 then -- glyph
+              if head1.id == glyph_id then -- glyph
                  char_count = char_count + 1
-              elseif char_count > 0 and head1.id == 10 then -- glue
+              elseif char_count > 0 and head1.id == glue_id then -- glue
                  word_count = word_count + 1
               end
               head1 = head1.prev
               head2 = head2.prev
            elseif (head1.id == 0 or head2.id == 0) then -- start of line
               break
-           elseif (head1.id ~= 37 and head1.id ~= 10) then -- some other kind of node
+           elseif (head1.id ~= glyph_id and head1.id ~= glue_id) then -- some other kind of node
               head1 = head1.prev
-           elseif (head2.id ~= 37 and head2.id ~= 10) then -- some other kind of node
+           elseif (head2.id ~= glyph_id and head2.id ~= glue_id) then -- some other kind of node
               head2 = head2.prev
-           elseif (head1.id == 37 and head1.char < 48) then -- punctuation
+           elseif (head1.id == glyph_id and head1.char < 48) then -- punctuation
               head1 = head1.prev
-           elseif (head2.id == 37 and head2.char < 48) then -- punctuation
+           elseif (head2.id == glyph_id and head2.char < 48) then -- punctuation
               head2 = head2.prev
            else -- no match, no special node
               break
            end
         end
         -- analyze last non-matching node, check for punctuation
-        if ((head1 and head1.id == 37 and head1.char > 49)
-             or (head2 and head2.id == 37 and head2.char > 49)) then
+        if ((head1 and head1.id == glyph_id and head1.char > 49)
+             or (head2 and head2.id == glyph_id and head2.char > 49)) then
            -- not a word
         elseif char_count > 0 then
            word_count = word_count + 1
@@ -818,10 +821,10 @@
         local max_word = tonumber(\inthomeoarchymaxwords)
      
         while head do
-          if head.id == 0 then -- new line
+          if head.id == hlist_id then -- new line
             prev_line = cur_line
             cur_line = head
-            if prev_line.id == 0 then
+            if prev_line.id == hlist_id then
                -- homeoarchy
                char_count,word_count,prev_head,cur_head = compare_lines(prev_line,cur_line)
                if char_count >= max_char or word_count >= max_word then
@@ -855,12 +858,12 @@
         local linecounter = 0
      
         while head do
-          if head.id == 0 then -- new line
+          if head.id == hlist_id then -- new line
             linecounter = linecounter + 1
             if linecounter > 1 then
                prev_line = cur_line
                cur_line = head
-               if prev_line.id == 0 then
+               if prev_line.id == hlist_id then
                   -- homoioteleuton
                   char_count,word_count,prev_head,cur_head = compare_lines_reverse(prev_line,cur_line)
                   if char_count >= max_char or word_count >= max_word then
@@ -905,7 +908,7 @@ river_analyze_line = function(line,dim1,dim2,precision)
    local head = line.head
 
    while head do
-      if head.id == 10 then  -- glue node
+      if head.id == glue_id then  -- glue node
          local w1,h1,d1 = node.dimensions(line.glue_set,line.glue_sign,line.glue_order,line.head,head.prev)
          local w2,h2,d2 = node.dimensions(line.glue_set,line.glue_sign,line.glue_order,line.head,head)
          --print("dim1:"..dim1.."; dim2:"..dim2.."; w1:"..w1.."; w2:"..w2) 
@@ -931,7 +934,7 @@ rivers = function (head)
    local linecounter = 0
 
    while head do
-      if head.id == 0 then -- new line
+      if head.id == hlist_id then -- new line
          linecounter = linecounter + 1
          prev_prev_line = prev_line
          prev_line = cur_line
@@ -941,9 +944,9 @@ rivers = function (head)
             char_count = 0
             
             while cur_node do
-               if cur_node.id == 37 then  -- glyph
+               if cur_node.id == glyph_id then  -- glyph
                   char_count = char_count + 1
-               elseif cur_node.id == 10 and char_count > 0 and cur_node.next then  -- glue node
+               elseif cur_node.id == glue_id and char_count > 0 and cur_node.next then  -- glue node
                   -- prev_line
                   local w1,h1,d1 = node.dimensions(head.glue_set,head.glue_sign,head.glue_order,head.head,cur_node.prev)
                   local w2,h2,d2 = node.dimensions(head.glue_set,head.glue_sign,head.glue_order,head.head,cur_node)

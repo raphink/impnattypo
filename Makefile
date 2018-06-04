@@ -1,7 +1,7 @@
 CTANUPLOAD=ctanupload
 
 CONTRIBUTION  = impnattypo
-VERSION       = v1.4
+VERSION       = v1.5
 SUMMARY       = Typographic utilities inspired by the French Imprimerie Nationale
 NAME          = Raphaël Pinson
 EMAIL         = raphink@gmail.com

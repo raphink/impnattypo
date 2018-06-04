@@ -659,6 +659,10 @@
    \ifluatex
       \RequirePackage{luatexbase,luacode}
       \begin{luacode}
+      local glyph_id = node.id "glyph"
+      local glue_id  = node.id "glue"
+      local hlist_id = node.id "hlist"
+      
       last_line_twice_parindent = function (head)
         while head do
           local _w,_h,_d = node.dimensions(head)
@@ -700,6 +704,10 @@
    \ifluatex
       \RequirePackage{luatexbase,luacode}
       \begin{luacode}
+      local glyph_id = node.id "glyph"
+      local glue_id  = node.id "glue"
+      local hlist_id = node.id "hlist"
+      
       compare_lines = function (line1,line2)
         local head1 = line1.head
         local head2 = line2.head
@@ -904,6 +912,10 @@
    \ifluatex
       \RequirePackage{luatexbase,luacode}
       \begin{luacode}
+local glyph_id = node.id "glyph"
+local glue_id  = node.id "glue"
+local hlist_id = node.id "hlist"
+      
 river_analyze_line = function(line,dim1,dim2,precision)
    local head = line.head
 

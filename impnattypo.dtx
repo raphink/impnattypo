@@ -57,7 +57,7 @@
 %</driver>
 % \fi
 %
-% \CheckSum{121}
+% \CheckSum{138}
 %
 % \CharacterTable
 %  {Upper-case    \A\B\C\D\E\F\G\H\I\J\K\L\M\N\O\P\Q\R\S\T\U\V\W\X\Y\Z
@@ -239,7 +239,9 @@
 % When \LuaTeX{} is used, the solution provided by Patrick Gundlach\footnote{\url{http://tex.stackexchange.com/questions/28357/ensure-minimal-length-of-last-line/28361\#28361}}
 % is used. With other rendering engines, it is the native solution provided by
 % Enrico Gregorio\footnote{\url{http://tex.stackexchange.com/questions/28357/ensure-minimal-length-of-last-line/28358\#28358}}
-% that serves as an implementation:
+% that serves as an implementation. The option \texttt{lastparlineminlength}
+% allows to set, for the last line of a paragaph, a minimal length greater (but
+% not smaller) than its default (|2\parindent|):
 % \else
 % De plus, il est indiqué dans la section \og Coupure des mots \fg{}
 % que \og la dernière ligne d'un alinéa doit comporter un mot ou
@@ -252,19 +254,29 @@
 % Lorsque \LuaTeX{} est utilisé, la solution de Patrick Gundlach\footnote{\url{http://tex.stackexchange.com/questions/28357/ensure-minimal-length-of-last-line/28361\#28361}}
 % est utilisée. Avec les autres moteurs de rendu, c'est la solution native de
 % Enrico Gregorio\footnote{\url{http://tex.stackexchange.com/questions/28357/ensure-minimal-length-of-last-line/28358\#28358}}
-% qui fait office d'implémentation:
+% qui fait office d'implémentation. L'option \texttt{lastparlineminlength}
+% permet de choisir, pour la dernière ligne de l'alinéa, une longueur minimale
+% supérieure (mais pas inférieure) à sa valeur par défaut (|2\parindent|) :
 % \fi
 %
 % \begin{verbatim}
-%    \usepackage[lastparline]{impnattypo}
+%    \usepackage[lastparline, lastparlineminlength=3em]{impnattypo}
 % \end{verbatim}
 %
 % \ifenglish
+% \noindent With \LuaTeX{}, the value given to the option \texttt{lastparlineminlength} is
+% stored in the length |\lastparlineminlength|, which can be modified later, within
+% the document.
+%
 % When the \texttt{draft} option is activated and \LuaTeX{} is used,
 % the inserted ties are colored in
 % {\color{\intlastparlinecolor}\intlastparlinecolor}.
 % The color can be tuned with the \texttt{lastparlinecolor} option.
 % \else
+% \noindent Avec \LuaLaTeX{}, la valeur passée à l'option \texttt{lastparlineminlength}
+% est stockée dans la longueur |\lastparlineminlength|, qui peut être modifée
+% ultérieurement, dans le document.
+%
 % Lorsque l'option \texttt{draft} est activée et que \LuaTeX{} est utilisé,
 % les espaces insécables insérés sont colorés en
 % {\color{\intlastparlinecolor}\intlastparlinecolor}.

@@ -569,6 +569,7 @@
 \DeclareStringOption[lime]{riverscolor}
 \DeclareStringOption[1]{homeoarchymaxwords}
 \DeclareStringOption[3]{homeoarchymaxchars}
+\DeclareStringOption[0pt]{lastparlineminlength}
 \ProcessKeyvalOptions*
 \RequirePackage{xcolor}
 \def\usecolor#1{\csname\string\color@#1\endcsname\space}
@@ -659,18 +660,22 @@
 %    \begin{macrocode}
 \ifintlastparline
    \ifluatex
+      \newlength{\lastparlineminlength}
+      \setlength{\lastparlineminlength}{\intlastparlineminlength}
       \RequirePackage{luatexbase,luacode}
       \begin{luacode}
       local glyph_id = node.id "glyph"
       local glue_id  = node.id "glue"
       local hlist_id = node.id "hlist"
 
-      last_line_twice_parindent = function (head)
+      last_line_minimal_length = function (head)
         while head do
           local _w,_h,_d = node.dimensions(head)
-          if head.id == glue_id and head.subtype ~= 15 and (_w < 2 * tex.parindent) then
+          if head.id == glue_id and head.subtype ~= 15
+            and (_w < 2 * tex.parindent or _w < tex.skip['lastparlineminlength'].width)
+          then
 
-              -- we are at a glue and have less then 2*\parindent to go
+              -- we are at a glue and have less then 2*\parindent of \lastparlineminlength to go
               local p = node.new("penalty")
               p.penalty = 10000
 
@@ -690,10 +695,14 @@
         return true
       end
 
-      luatexbase.add_to_callback("pre_linebreak_filter",last_line_twice_parindent,"lastparline")
+      luatexbase.add_to_callback("pre_linebreak_filter",last_line_minimal_length,"lastparline")
       \end{luacode}
    \else
-      \setlength{\parfillskip}{0pt plus\dimexpr\textwidth-2\parindent}
+      \setlength{\@tempskipa}{\intlastparlineminlength}
+      \ifdim\@tempskipa < 2\parindent
+        \setlength{\@tempskipa}{2\parindent}
+      \fi
+      \setlength{\parfillskip}{0pt plus\dimexpr\textwidth-\@tempskipa}
    \fi
 \fi
 %    \end{macrocode}

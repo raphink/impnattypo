@@ -1,14 +1,19 @@
 \documentclass{scrbook}
 
-\usepackage[draft,
-            nosingleletter,
-            lastparline,
-            nosinglelettercolor=green,
-            lastparlinecolor=blue]{impnattypo}
+\usepackage[%
+  draft,
+  nosingleletter,
+  lastparline,
+  nosinglelettercolor=green,
+  lastparlinecolor=blue,
+  lastparlineminlength=2cm
+]{impnattypo}
 \usepackage[french]{babel} %language selection
 
 \usepackage{fontspec}
 \setmainfont{Linux Libertine O}
+
+\usepackage{enumitem}
 
 \begin{document}
 
@@ -17,10 +22,27 @@ Je sais bien qu'il y a peu de
 gens qui y vont à reculons.
 }
 
+\vspace{3cm}
+
+\begin{minipage}{5cm}
+  zzz zzz zzz zzz zzz zzz zzz zzz zzz zzz
+
+  \begin{itemize}
+  \item zzz zzz zzz zzz zzz zzz zzz zzz zzz zzz
+  \item zzz zzz zzz zzz zzz zzz zzz zzz
+  \item zzz zzz zzz zzz zzz zzz zzz
+  \end{itemize}
+\end{minipage}
 
 \vspace{3cm}
 
-\parindent = 2cm
+\ifluatex
+  \parindent = 2cm
+  \setlength{\lastparlineminlength}{0.5\linewidth}
+\else
+  \parindent = 5cm
+  \the\parfillskip
+\fi
 
 A wonderful serenity has taken possession of my entire soul, like these sweet mornings of spring which I enjoy with my whole heart. I am alone, and feel.
 

@@ -680,15 +680,23 @@
       local glyph_id = node.id "glyph"
       local glue_id  = node.id "glue"
       local hlist_id = node.id "hlist"
+      local disc_id  = node.id "disc"
 
       last_line_minimal_length = function (head)
         while head do
           local _w,_h,_d = node.dimensions(head)
-          if head.id == glue_id and head.subtype ~= 15
-            and (_w < 2 * tex.parindent or _w < tex.skip['lastparlineminlength'].width)
+          if
+            _w < 2 * tex.parindent or _w < tex.skip['lastparlineminlength'].width
           then
+            -- we have less then 2*\parindent of \lastparlineminlength to go
 
-              -- we are at a glue and have less then 2*\parindent of \lastparlineminlength to go
+            if head.id == disc_id then
+              -- we are at a discretionary: avoid hyphenations
+              head.penalty=10000
+            end
+
+            if head.id == glue_id and head.subtype ~= 15 then
+              -- we are at a glue: avoid line break
               local p = node.new("penalty")
               p.penalty = 10000
 
@@ -701,6 +709,8 @@
               \else
                  node.insert_after(head,head.prev,p)
               \fi
+            end
+
           end
 
           head = head.next

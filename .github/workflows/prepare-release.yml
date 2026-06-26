@@ -26,12 +26,36 @@ jobs:
         run: |
           DATE=$(date +%Y/%m/%d)
 
-          # Update \ProvidesPackage date and version
-          sed -i "s|^\( *\)\[.*Typographic utilities|\1[${DATE} ${VERSION} Typographic utilities|" impnattypo.dtx
+          python3 - <<EOF
+          import os, re
 
-          # Insert \changes entry after the \iffalse meta-comment block (before existing \changes lines)
-          sed -i "s|% \\\\changes{${VERSION}}{.*}.*||g" impnattypo.dtx
-          sed -i "/% \\\\changes{/i % \\\\changes{${VERSION}}{${DATE}}{${CHANGELOG}}" impnattypo.dtx
+          version  = os.environ['VERSION']
+          changelog = os.environ['CHANGELOG']
+          date     = '${DATE}'
+
+          with open('impnattypo.dtx') as f:
+              content = f.read()
+
+          # Update \ProvidesPackage date and version
+          content = re.sub(
+              r'(\s*)\[[\d/]+ [\d.]+ (Typographic utilities)',
+              rf'\1[{date} {version} \2',
+              content,
+          )
+
+          # Remove any existing \changes entry for this version, then
+          # insert a single one before the first \changes line
+          content = re.sub(r'% \\changes\{' + re.escape(version) + r'\}[^\n]*\n', '', content)
+          content = re.sub(
+              r'(% \\changes\{)',
+              rf'% \\changes{{{version}}}{{{date}}}{{{changelog}}}\n\1',
+              content,
+              count=1,
+          )
+
+          with open('impnattypo.dtx', 'w') as f:
+              f.write(content)
+          EOF
 
           # Update VERSION in Makefile
           sed -i "s|^VERSION *=.*|VERSION       = v${VERSION}|" Makefile

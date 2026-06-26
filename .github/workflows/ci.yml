@@ -1,0 +1,38 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install TeX Live
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends \
+            texlive-luatex \
+            texlive-latex-extra \
+            texlive-lang-french \
+            texlive-fonts-extra \
+            fonts-linuxlibertine \
+            make
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.3'
+          bundler-cache: true
+
+      - name: Build package and French documentation
+        run: |
+          latex impnattypo.ins
+          make impnattypo-fr.pdf
+
+      - name: Run tests
+        run: make check

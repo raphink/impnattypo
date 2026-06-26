@@ -1,0 +1,48 @@
+name: Prepare Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version number (e.g. 1.7)'
+        required: true
+      changelog:
+        description: 'One-line changelog entry for \changes'
+        required: true
+
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Patch impnattypo.dtx and Makefile
+        env:
+          VERSION: ${{ github.event.inputs.version }}
+          CHANGELOG: ${{ github.event.inputs.changelog }}
+        run: |
+          DATE=$(date +%Y/%m/%d)
+
+          # Update \ProvidesPackage date and version
+          sed -i "s|^\( *\)\[.*Typographic utilities|\1[${DATE} ${VERSION} Typographic utilities|" impnattypo.dtx
+
+          # Insert \changes entry after the \iffalse meta-comment block (before existing \changes lines)
+          sed -i "s|% \\\\changes{${VERSION}}{.*}.*||g" impnattypo.dtx
+          sed -i "/% \\\\changes{/i % \\\\changes{${VERSION}}{${DATE}}{${CHANGELOG}}" impnattypo.dtx
+
+          # Update VERSION in Makefile
+          sed -i "s|^VERSION *=.*|VERSION       = v${VERSION}|" Makefile
+
+      - name: Commit and tag
+        env:
+          VERSION: ${{ github.event.inputs.version }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add impnattypo.dtx Makefile
+          git commit -m "Release v${VERSION}"
+          git tag "v${VERSION}"
+          git push origin master "v${VERSION}"

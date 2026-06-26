@@ -1,5 +1,3 @@
-CTANUPLOAD=ctanupload
-
 CONTRIBUTION  = impnattypo
 VERSION       = v1.6
 SUMMARY       = Typographic utilities inspired by the French Imprimerie Nationale
@@ -43,9 +41,6 @@ $(CONTRIBUTION)-fr.pdf: $(CONTRIBUTION).sty $(CONTRIBUTION)-fr.tex
 	makeindex -s gind.ist $(CONTRIBUTION)-fr.idx
 	makeindex -s gglo.ist -o $(CONTRIBUTION)-fr.gls $(CONTRIBUTION)-fr.glo
 	lualatex -interaction=batchmode $(CONTRIBUTION)-fr.tex
-
-upload: ctanify
-	$(CTANUPLOAD) -p
 
 %.tds.zip: %.tar.gz
 	tar xzf $< $@

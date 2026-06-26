@@ -1,0 +1,54 @@
+name: Release to CTAN
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install TeX Live and ctanify
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends \
+            texlive-luatex \
+            texlive-latex-extra \
+            texlive-lang-french \
+            texlive-fonts-extra \
+            fonts-linuxlibertine \
+            make \
+            libfile-copy-recursive-perl
+
+      - name: Install ctanify
+        run: sudo cpan -T App::ctanify 2>/dev/null || sudo apt-get install -y texlive-extra-utils
+
+      - name: Build package
+        run: |
+          latex impnattypo.ins
+          make impnattypo.pdf impnattypo-fr.pdf
+
+      - name: Build CTAN archive
+        run: make ctanify
+
+      - name: Submit to CTAN
+        uses: paolobrasolin/ctan-submit-action@v1
+        with:
+          action: upload
+          file_path: impnattypo.tar.gz
+          fields: |
+            pkg: impnattypo
+            version: ${{ github.ref_name }}
+            uploader: Raphaël Pinson
+            email: raphink@gmail.com
+            author: Raphaël Pinson
+            summary: Typographic utilities inspired by the French Imprimerie Nationale
+            license: lppl
+            directory: /macros/latex/contrib/impnattypo
+            announcement: |
+              New release ${{ github.ref_name }} of impnattypo.
+              See the README for details.

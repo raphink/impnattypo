@@ -36,7 +36,7 @@ jobs:
       - name: Submit to CTAN
         run: |
           curl --fail-with-body \
-            -F "action=update" \
+            -F "update=true" \
             -F "pkg=impnattypo" \
             -F "version=${{ github.ref_name }}" \
             -F "uploader=Raphaël Pinson" \
@@ -44,7 +44,7 @@ jobs:
             -F "author=Raphaël Pinson" \
             -F "summary=Typographic utilities inspired by the French Imprimerie Nationale" \
             -F "license=lppl" \
-            -F "directory=/macros/latex/contrib/impnattypo" \
+            -F "ctanPath=/macros/latex/contrib/impnattypo" \
             -F "announcement=New release ${{ github.ref_name }} of impnattypo." \
             -F "file=@impnattypo.tar.gz" \
             https://www.ctan.org/submit/upload

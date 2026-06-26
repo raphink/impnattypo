@@ -18,6 +18,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.RELEASE_TOKEN }}
 
       - name: Patch impnattypo.dtx and Makefile
         env:
@@ -69,4 +71,5 @@ jobs:
           git add impnattypo.dtx Makefile
           git commit -m "Release v${VERSION}"
           git tag "v${VERSION}"
+          git remote set-url origin https://x-access-token:${{ secrets.RELEASE_TOKEN }}@github.com/${{ github.repository }}
           git push origin master "v${VERSION}"

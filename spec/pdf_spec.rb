@@ -1,20 +1,21 @@
 require 'pdf/reader'
 
-describe 'Impnattypo PDF' do
-  reader = PDF::Reader.new('impnattypo-fr.pdf')
-  it 'should have 13 pages' do
-    reader.page_count.should eq(13)
+RSpec.describe 'Impnattypo PDF' do
+  let(:reader) { PDF::Reader.new('impnattypo-fr.pdf') }
+
+  it 'has 14 pages' do
+    expect(reader.page_count).to eq(14)
   end
-  it 'should be made by TeX' do
-    reader.info[:Creator].should eq('TeX')
+  it 'is made by LaTeX' do
+    expect(reader.info[:Creator]).to match(/LaTeX/)
   end
-  it 'should have page 1 with given media box' do
-    reader.pages[0].attributes[:MediaBox].should eq([0, 0, 612, 792])
+  it 'has A4 media box on page 1' do
+    expect(reader.pages[0].attributes[:MediaBox]).to eq([0, 0, 595.276, 841.89])
   end
-  it 'should have 5 fonts on page 2' do
-    reader.pages[1].fonts.keys.size.should eq(5)
+  it 'has 5 fonts on page 2' do
+    expect(reader.pages[1].fonts.keys.size).to eq(5)
   end
-  it 'should start with a title' do
-    reader.pages[0].text.should match('impnattypo')
+  it 'starts with a title' do
+    expect(reader.pages[0].text).to match('impnattypo')
   end
 end

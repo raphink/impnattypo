@@ -54,14 +54,14 @@ install: $(CONTRIBUTION).tds.zip
 	unzip $< -d $(TEXINSTALLDIR)
 	mktexlsr
 
-test: $(CONTRIBUTION)-test.pdf
+test: $(CONTRIBUTION).sty $(CONTRIBUTION)-test.pdf
 
 clean:
 	rm -f *.aux *.glo *.idx *.log
 	rm -f $(DOCFILES) $(PKGFILES)
 	rm -f $(FILE)
 
-check: test
+check: test $(CONTRIBUTION)-fr.pdf
 	test -e $(CONTRIBUTION)-test.pdf
-	rspec spec/pdf_spec.rb
+	bundle exec rspec spec/pdf_spec.rb
 

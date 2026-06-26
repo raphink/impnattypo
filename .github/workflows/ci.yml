@@ -29,10 +29,5 @@ jobs:
           ruby-version: '3.3'
           bundler-cache: true
 
-      - name: Build package and French documentation
-        run: |
-          latex impnattypo.ins
-          make impnattypo-fr.pdf
-
       - name: Run tests
         run: make check

@@ -268,6 +268,8 @@
 % \noindent With \LuaTeX{}, the value given to the option \texttt{lastparlineminlength} is
 % stored in the length |\lastparlineminlength|, which can be modified later, within
 % the document.
+% Hyphenation is also suppressed near the end of the paragraph to prevent
+% hyphenation points from interfering with the minimal length constraint.
 %
 % When the \texttt{draft} option is activated and \LuaTeX{} is used,
 % the inserted ties are colored in
@@ -277,6 +279,8 @@
 % \noindent Avec \LuaLaTeX{}, la valeur passée à l'option \texttt{lastparlineminlength}
 % est stockée dans la longueur |\lastparlineminlength|, qui peut être modifée
 % ultérieurement, dans le document.
+% Les césures sont également supprimées en fin d'alinéa afin d'éviter
+% qu'un point de césure n'interfère avec la contrainte de longueur minimale.
 %
 % Lorsque l'option \texttt{draft} est activée et que \LuaTeX{} est utilisé,
 % les espaces insécables insérés sont colorés en
@@ -688,7 +692,7 @@
           if
             _w < 2 * tex.parindent or _w < tex.skip['lastparlineminlength'].width
           then
-            -- we have less then 2*\parindent of \lastparlineminlength to go
+            -- we have less than 2*\parindent or \lastparlineminlength to go
 
             if head.id == disc_id then
               -- we are at a discretionary: avoid hyphenations

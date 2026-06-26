@@ -34,19 +34,16 @@ jobs:
         run: make ctanify
 
       - name: Submit to CTAN
-        uses: paolobrasolin/ctan-submit-action@v1
-        with:
-          action: upload
-          file_path: impnattypo.tar.gz
-          fields: |
-            pkg: impnattypo
-            version: ${{ github.ref_name }}
-            uploader: Raphaël Pinson
-            email: raphink@gmail.com
-            author: Raphaël Pinson
-            summary: Typographic utilities inspired by the French Imprimerie Nationale
-            license: lppl
-            directory: /macros/latex/contrib/impnattypo
-            announcement: |
-              New release ${{ github.ref_name }} of impnattypo.
-              See the README for details.
+        run: |
+          curl --fail-with-body -F "action=update" \
+            -F "pkg=impnattypo" \
+            -F "version=${{ github.ref_name }}" \
+            -F "uploader=Raphaël Pinson" \
+            -F "email=raphink@gmail.com" \
+            -F "author=Raphaël Pinson" \
+            -F "summary=Typographic utilities inspired by the French Imprimerie Nationale" \
+            -F "license=lppl" \
+            -F "directory=/macros/latex/contrib/impnattypo" \
+            -F "announcement=New release ${{ github.ref_name }} of impnattypo." \
+            -F "file=@impnattypo.tar.gz" \
+            https://www.ctan.org/submit/upload

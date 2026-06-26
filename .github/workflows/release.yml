@@ -22,6 +22,7 @@ jobs:
             texlive-fonts-extra \
             texlive-extra-utils \
             fonts-linuxlibertine \
+            libfile-copy-recursive-perl \
             make
 
       - name: Build package

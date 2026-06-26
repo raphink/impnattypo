@@ -20,12 +20,9 @@ jobs:
             texlive-latex-extra \
             texlive-lang-french \
             texlive-fonts-extra \
+            texlive-extra-utils \
             fonts-linuxlibertine \
-            make \
-            libfile-copy-recursive-perl
-
-      - name: Install ctanify
-        run: sudo cpan -T App::ctanify 2>/dev/null || sudo apt-get install -y texlive-extra-utils
+            make
 
       - name: Build package
         run: |

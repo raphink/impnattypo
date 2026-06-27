@@ -12,7 +12,7 @@ l'Imprimerie Nationale Française.
 
 ## Maintainer
 
-Raphaël Pinson <raphink@gmail.com>
+Raphaël Pinson <raphink@finchnest.ch>
 
 ## License
 

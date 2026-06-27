@@ -40,7 +40,7 @@ jobs:
             -F "pkg=impnattypo" \
             -F "version=${{ github.ref_name }}" \
             -F "uploader=Raphaël Pinson" \
-            -F "email=raphink@gmail.com" \
+            -F "email=raphink@finchnest.ch" \
             -F "author=Raphaël Pinson" \
             -F "summary=Typographic utilities inspired by the French Imprimerie Nationale" \
             -F "license=lppl1.3" \

@@ -1,5 +1,5 @@
 CONTRIBUTION  = impnattypo
-VERSION       = v1.7
+VERSION       = v1.8
 SUMMARY       = Typographic utilities inspired by the French Imprimerie Nationale
 NAME          = Raphaël Pinson
 EMAIL         = raphink@finchnest.ch

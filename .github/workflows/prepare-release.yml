@@ -30,14 +30,14 @@ jobs:
           VERSION: ${{ github.event.inputs.version }}
           CHANGELOG: ${{ github.event.inputs.changelog }}
         run: |
-          DATE=$(date +%Y/%m/%d)
+          export DATE=$(date +%Y/%m/%d)
 
-          python3 - <<EOF
+          python3 - <<'EOF'
           import os, re
 
-          version  = os.environ['VERSION']
+          version   = os.environ['VERSION']
           changelog = os.environ['CHANGELOG']
-          date     = '${DATE}'
+          date      = os.environ['DATE']
 
           with open('impnattypo.dtx') as f:
               content = f.read()
@@ -45,7 +45,7 @@ jobs:
           # Update \ProvidesPackage date and version
           content = re.sub(
               r'(\s*)\[[\d/]+ [\d.]+ (Typographic utilities)',
-              rf'\1[{date} {version} \2',
+              lambda m: f'{m.group(1)}[{date} {version} {m.group(2)}',
               content,
           )
 
@@ -54,7 +54,7 @@ jobs:
           content = re.sub(r'% \\changes\{' + re.escape(version) + r'\}[^\n]*\n', '', content)
           content = re.sub(
               r'(% \\changes\{)',
-              rf'% \\changes{{{version}}}{{{date}}}{{{changelog}}}\n\1',
+              lambda m: f'% \\changes{{{version}}}{{{date}}}{{{changelog}}}\n{m.group(1)}',
               content,
               count=1,
           )

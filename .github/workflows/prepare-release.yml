@@ -9,6 +9,10 @@ on:
       changelog:
         description: 'One-line changelog entry for \changes'
         required: true
+      announce:
+        description: 'Announcement text for CTAN (leave empty for minor releases)'
+        required: false
+        default: ''
 
 jobs:
   prepare:
@@ -70,6 +74,6 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add impnattypo.dtx Makefile
           git commit -m "Release v${VERSION}"
-          git tag "v${VERSION}"
+          git tag -m "${{ github.event.inputs.announce }}" "v${VERSION}"
           git remote set-url origin https://x-access-token:${{ secrets.RELEASE_TOKEN }}@github.com/${{ github.repository }}
           git push origin master "v${VERSION}"

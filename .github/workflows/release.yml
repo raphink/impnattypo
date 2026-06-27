@@ -43,8 +43,8 @@ jobs:
             -F "email=raphink@gmail.com" \
             -F "author=Raphaël Pinson" \
             -F "summary=Typographic utilities inspired by the French Imprimerie Nationale" \
-            -F "license=lppl" \
+            -F "license=lppl1.3" \
             -F "ctanPath=/macros/latex/contrib/impnattypo" \
-            -F "announcement=New release ${{ github.ref_name }} of impnattypo." \
+            -F "announcement=$(git tag -l --format='%(contents)' ${{ github.ref_name }})" \
             -F "file=@impnattypo.tar.gz" \
             https://www.ctan.org/submit/upload

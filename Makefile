@@ -21,7 +21,7 @@ export CONTRIBUTION VERSION NAME EMAIL SUMMARY DIRECTORY DONOTANNOUNCE ANNOUNCE 
 ctanify: $(FILE)
 
 $(FILE): README.md $(SOURCEFILES) $(DOCFILES) $(PKGFILES)
-	ctanify --pkgname $(CONTRIBUTION) $^
+	ctanify --pkgname $(CONTRIBUTION) --notds $^
 
 %.sty %-fr.tex: %.dtx %.ins
 	latex $*.ins
